@@ -1,2 +1,2 @@
-# partners_online_search
+# partners module
 Поиск тур. услуг на сайте партнера
