@@ -1,0 +1,29 @@
+
+/* 
+    Created on : 13.12.2017, 14:02:53
+    Author     : dimabresky
+*/
+
+.btn-search-area {
+    margin-top: 24px;
+}
+
+.btn-search-area button {
+    width: 100%;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+span.select2-selection {
+    height: 34px !important;
+    width: 100% !important;
+    border: 1px solid #ccc !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+span.select2-container {
+    width: 100% !important;
+}

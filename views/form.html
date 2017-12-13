@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FORM</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/select2.min.css">
+        <link rel="stylesheet" href="../css/daterangepicker.min.css">
+        <link rel="stylesheet" href="../css/forms/theme-blue.css">
+        <link rel="stylesheet" href="../css/forms/styles.css?9">
+    </head>
+    <body>
+
+        <div class="container theme-blue">
+            <div class="row">
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#placements-form-area">Проживание</a></li>
+                    <li><a data-toggle="tab" href="#sanatorium-form-area">Санатории</a></li>
+                    <li><a data-toggle="tab" href="#excursions-form-area">Экскурсии</a></li>
+                </ul>
+
+                <div class="tab-content clearfix">
+
+                    <div class="tab-pane active" id="placements-form-area">
+                        <form id="placements-form">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Город, гостиница, усадьба...
+                                    </label>
+                                    <select name="tpm_params[id][]" class="form-control select2">
+                                        <option value="Объект1">Объект1</option>
+                                        <option value="Объект2">Объект2</option>
+                                        <option value="Объект3">Объект3</option>
+                                        <option value="Объект4">Объект4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Период проживания
+                                    </label>
+                                    <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control" >
+                                    <input type="hidden" name="tpm_params[date_form]" >
+                                    <input type="hidden" name="tpm_params[date_to]" >
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Взрослых
+                                    </label>
+                                    <select name="tpm_params[adults]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Детей
+                                    </label>
+                                    <select name="tpm_params[children]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+<!--                                    <div class="age-wrapper">
+                                        <span class="age-title">Возраст детей</span>
+                                        <hr>
+                                        <div class="age-closer">×</div>
+                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-12">
+
+                                <div class="form-group btn-search-area">
+                                    <button type="submit" class="btn btn-primary">Найти</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="sanatorium-form-area">
+
+                        <form id="excursions-form">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Город, мед. профиль, санаторий
+                                    </label>
+                                    <select name="tpm_params[id][]" class="form-control select2">
+                                        <option value="Объект1">Объект1</option>
+                                        <option value="Объект2">Объект2</option>
+                                        <option value="Объект3">Объект3</option>
+                                        <option value="Объект4">Объект4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Период проживания
+                                    </label>
+                                    <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control">
+                                    <input type="hidden" name="tpm_params[date_form]" >
+                                    <input type="hidden" name="tpm_params[date_to]" >
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Взрослых
+                                    </label>
+                                    <select name="tpm_params[adults]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Детей
+                                    </label>
+                                    <select name="tpm_params[children]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-12">
+
+                                <div class="form-group btn-search-area">
+                                    <button type="submit" class="btn btn-primary">Найти</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="tab-pane" id="excursions-form-area">
+                        <form id="placements-form">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Город, экскурсия
+                                    </label>
+                                    <select name="tpm_params[id][]" class="form-control select2">
+                                        <option value="Объект1">Объект1</option>
+                                        <option value="Объект2">Объект2</option>
+                                        <option value="Объект3">Объект3</option>
+                                        <option value="Объект4">Объект4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Период проживания
+                                    </label>
+                                    <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control">
+                                    <input type="hidden" name="tpm_params[date_form]" >
+                                    <input type="hidden" name="tpm_params[date_to]" >
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Взрослых
+                                    </label>
+                                    <select name="tpm_params[adults]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Детей
+                                    </label>
+                                    <select name="tpm_params[children]" class="form-control select2">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-12">
+
+                                <div class="form-group btn-search-area">
+                                    <button type="submit" class="btn btn-primary">Найти</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script src="../js/jquery-3.2.1.min.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
+        <script src="../js/select2.full.min.js"></script>
+        <script src="../js/moment.min.js"></script>
+        <script src="../js/moment_locales.min.js"></script>
+        <script src="../js/daterangepicker.min.js"></script>
+        <script src="../js/forms/main.js?14"></script>
+    </body>
+</html>
