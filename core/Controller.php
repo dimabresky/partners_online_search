@@ -1,6 +1,6 @@
 <?php
 
-namespace travesoft\online;
+namespace travesoft\pm;
 
 /**
  * Контроллер для обработки запросов с сайта партнера для поиска тур. услуг
@@ -43,10 +43,8 @@ class Controller {
         
         $this->_sendResponse(array(), "Bad request", "");
         
-    }
-    
-    
-    
+    } 
+   
     /**
      * Отправляем результат обработки запроса
      * @param array $data
