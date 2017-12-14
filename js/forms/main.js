@@ -5,6 +5,65 @@
 
 $(document).ready(function () {
     
+    "use strict";
+    
+    /**
+     * Контейнер обработчиков событий
+     * @type Object
+     */
+    var __eventsHandlers = {
+        
+        /**
+         * Обработка выбора количества детей
+         * @param {Event} e
+         * @returns {undefined}
+         */
+        childCountChoosing: function (e) {
+            
+            var count = this.value;
+            
+            function destroyAgeSelector ($this) {
+                
+               $this.find(".age-selector").each(function () {
+                   $(this).find("select.select2").select2("destroy");
+                   $(this).remove();
+                });
+            }
+            
+            if (count) {
+                
+                $(this).siblings('.age-wrapper').each(function () {
+                    
+                    destroyAgeSelector($(this));
+                    
+                    $(this).append((function () {
+                        
+                        var html = "";
+                        
+                        for (var i = 1; i <= count; i++) {
+                            
+                            html += __createChildrenAgeBlock(i);
+                        }
+                       
+                        return html;
+                    })());
+                });
+                
+            } else {
+                
+                $(this).siblings('.age-wrapper').each(function () {
+                    $(this).find(".age-selector").each(function () {
+                        $(this).remove();
+                    });
+                    $(this).hide();
+                });
+            }
+            
+        }
+        
+    };
+    
+    // set russian locale of date staff 
     moment.locale("ru");
     
     /**
@@ -15,15 +74,32 @@ $(document).ready(function () {
     function __init(tab) {
 
         var tabArea = $(tab.attr("href"));
-
+        
+        // select2 init
         tabArea.find('.select2').each(function () {
-            $(this).select2();
+            
+            var $this = $(this);
+            
+            $this.select2();
+            
+            if ($this.data("onselect-handler-name")) {
+                $this.on("select2:select", function (e) {
+                    __eventsHandlers[$this.data("onselect-handler-name")].apply(this, [e]);
+                });
+            }
+            
+            
         });
         
+        // daterangepicker init
         tabArea.find('.datepicker').each(function () {
             __initDatepicker($(this));
         });
-
+        
+        // children age block closing init
+        tabArea.find(".age-closer").each(function () {
+            $(this).parent().hide();
+        });
     }
     
     /**
@@ -116,7 +192,36 @@ $(document).ready(function () {
             $(picker.container).find(".end-date").removeClass(".end-date");
         });
     }
-
+    
+    /**
+     * Создание html-блока для выбора возраста ребенка
+     * @param {Number} index
+     * @returns {String}
+     */
+    function __createChildrenAgeBlock (index) {
+        
+        var options = (function () {
+            
+            var str = "";
+            
+            for (var i = 1; i <= 17; i++) {
+                str += `<option value="${i}">${i}</option>`;
+            }
+            
+            return str;
+            
+        })();
+        
+        return `<div class="age-selector">
+                        ${index}-й ребенок
+                        <select data-index="${index}" class="select2 form-control" name="tpm_params[children_age][]">
+                            ${options}
+                        </select>
+                    </div>`;
+        
+    }
+    
+    // init all tabs
     $(".nav-tabs a").each(function () {
 
         var tab = $(this);

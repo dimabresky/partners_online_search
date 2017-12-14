@@ -27,3 +27,45 @@ span.select2-selection {
 span.select2-container {
     width: 100% !important;
 }
+
+.age-wrapper {
+    display: none;
+    position: relative;
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.age-wrapper hr {
+    margin: 0 !important;
+}
+
+.age-wrapper .age-closer {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 22px;
+    text-align: right;
+}
+
+.age-wrapper .age-selector {
+    margin: 10px 0;
+}
+
+.age-wrapper .age-selector span.select2-container {
+    width: 40px !important;
+    float: right;
+    text-align: center;
+}
+
+.age-wrapper .age-selector span.select2-selection {
+    height: 30px !important;
+}

@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="../css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/select2.min.css">
         <link rel="stylesheet" href="../css/daterangepicker.min.css">
-        <link rel="stylesheet" href="../css/forms/styles.css?9">
+        <link rel="stylesheet" href="../css/forms/styles.css?18">
     </head>
     <body>
 
@@ -65,17 +65,39 @@
                                     <label>
                                         Детей
                                     </label>
-                                    <select name="tpm_params[children]" class="form-control select2">
+                                    <select data-onselect-handler-name="childCountChoosing" name="tpm_params[children]" class="form-control select2">
+                                        <option value="0">Без детей</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-<!--                                    <div class="age-wrapper">
+                                    <div class="age-wrapper">
+                                        
                                         <span class="age-title">Возраст детей</span>
                                         <hr>
                                         <div class="age-closer">×</div>
-                                    </div>-->
+                                        <div class="age-selector">
+                                            1-й ребенок
+                                            <select class="select2 form-control" name="tpm_params[children_age][]">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="age-selector">
+                                            2-й ребенок
+                                            <select class="select2 form-control" name="tpm_params[children_age][]">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-12">
@@ -130,7 +152,8 @@
                                     <label>
                                         Детей
                                     </label>
-                                    <select name="tpm_params[children]" class="form-control select2">
+                                    <select data-onselect-handler-name="childCountChoosing" name="tpm_params[children]" class="form-control select2">
+                                        <option value="0">Без детей</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -190,7 +213,8 @@
                                     <label>
                                         Детей
                                     </label>
-                                    <select name="tpm_params[children]" class="form-control select2">
+                                    <select data-onselect-handler-name="childCountChoosing" name="tpm_params[children]" class="form-control select2">
+                                        <option value="0">Без детей</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -217,6 +241,6 @@
         <script src="../js/moment.min.js"></script>
         <script src="../js/moment_locales.min.js"></script>
         <script src="../js/daterangepicker.min.js"></script>
-        <script src="../js/forms/main.js?14"></script>
+        <script src="../js/forms/main.js?20"></script>
     </body>
 </html>
