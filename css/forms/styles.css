@@ -24,9 +24,9 @@ span.select2-selection {
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
 
-span.select2-container {
+/*.age-wrapper span.select2-container {
     width: 100% !important;
-}
+}*/
 
 .age-wrapper {
     display: none;
@@ -58,6 +58,7 @@ span.select2-container {
 
 .age-wrapper .age-selector {
     margin: 10px 0;
+    height: 30px;
 }
 
 .age-wrapper .age-selector span.select2-container {

@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="../css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/select2.min.css">
         <link rel="stylesheet" href="../css/daterangepicker.min.css">
-        <link rel="stylesheet" href="../css/forms/styles.css?18">
+        <link rel="stylesheet" href="../css/forms/styles.css?23">
     </head>
     <body>
 
@@ -42,9 +42,7 @@
                                     <label>
                                         Период проживания
                                     </label>
-                                    <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control" >
-                                    <input type="hidden" name="tpm_params[date_form]" >
-                                    <input type="hidden" name="tpm_params[date_to]" >
+                                    <input value="" name="date_range" data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control" >
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -77,26 +75,7 @@
                                         <span class="age-title">Возраст детей</span>
                                         <hr>
                                         <div class="age-closer">×</div>
-                                        <div class="age-selector">
-                                            1-й ребенок
-                                            <select class="select2 form-control" name="tpm_params[children_age][]">
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                            </select>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <div class="age-selector">
-                                            2-й ребенок
-                                            <select class="select2 form-control" name="tpm_params[children_age][]">
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                            </select>
-                                        </div>
-                                        
+                                                                               
                                     </div>
                                 </div>
                             </div>
@@ -130,8 +109,6 @@
                                         Период проживания
                                     </label>
                                     <input data-date-from="15.12.2017" date-date-to="25.12.2017" type="text" class="datepicker form-control">
-                                    <input type="hidden" name="tpm_params[date_form]" >
-                                    <input type="hidden" name="tpm_params[date_to]" >
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -159,6 +136,13 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
+                                    <div class="age-wrapper">
+                                        
+                                        <span class="age-title">Возраст детей</span>
+                                        <hr>
+                                        <div class="age-closer">×</div>
+                                                                               
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-12">
@@ -191,8 +175,6 @@
                                         Период проживания
                                     </label>
                                     <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control">
-                                    <input type="hidden" name="tpm_params[date_form]" >
-                                    <input type="hidden" name="tpm_params[date_to]" >
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -220,6 +202,13 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
+                                    <div class="age-wrapper">
+                                        
+                                        <span class="age-title">Возраст детей</span>
+                                        <hr>
+                                        <div class="age-closer">×</div>
+                                                                               
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-12">
@@ -241,6 +230,6 @@
         <script src="../js/moment.min.js"></script>
         <script src="../js/moment_locales.min.js"></script>
         <script src="../js/daterangepicker.min.js"></script>
-        <script src="../js/forms/main.js?20"></script>
+        <script src="../js/forms/main.js?30"></script>
     </body>
 </html>
