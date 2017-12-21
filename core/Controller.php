@@ -10,9 +10,11 @@ namespace travesoft\pm;
  */
 class Controller {
     
+    protected $_api = null;
+
     public function __construct() {
         
-        $this->_initApi();
+        $this->_api = new API();
     }
     
     /**
@@ -24,25 +26,38 @@ class Controller {
         
         $callback = (string)$_REQUEST['callback'];
         
-        $params = $_REQUEST['params'];
+        $params = $_REQUEST['tpm_params'];
+        
+        switch ($method) {
+            
+            case "GetFormsRenderData":
+                
+                $data = $this->_api->getFormRenderData($params);
 
-        if (
-                method_exists($this, $method) &&
-                is_array($params) && !empty($params)
-        ) {
+                $error = "";
+                if (empty($data)) {
+                    $error = "Nothing found on your request";
+                }
+                $this->_sendResponse($data, $error, $callback);
+                
+                break;
             
-            $data = $this->$method($params);
+            case "GetSearchResultRenderData":
+                
+                $data = $this->_api->getSearchResultRenderData($params);
+
+                $error = "";
+                if (empty($data)) {
+                    $error = "Nothing found on your request";
+                }
+                $this->_sendResponse($data, $error, $callback);
+                
+                break;
             
-            $error = "";
-            if (empty($data)) {
-                $error = "Nothing found on your request";
-            }
-            $this->_sendResponse($data, $error, $callback);
-            
+            default: 
+                
+                $this->_sendResponse(array(), "Bad request", "");
         }
-        
-        $this->_sendResponse(array(), "Bad request", "");
-        
     } 
    
     /**
@@ -53,14 +68,14 @@ class Controller {
      */
     protected function _sendResponse (array $data, string $error = "", string $callback = "") {
         
-        header('Content-Type', 'application/javascript; charset=utf-8');
+        header('Content-Type: application/javascript; charset=utf-8');
         
         $response = array(
             'data' => $data,
             'errorMessage' => $error,
             'isError' => strlen($error) > 0
         );
-        
+       
         if (strlen($callback) > 0) {
             echo $callback . "(" .\json_encode($response). ")";
         } else {
@@ -69,21 +84,5 @@ class Controller {
         
         die;
         
-    }
-    
-    /**
-     * Инициализация api для работы
-     */
-    protected function _initApi () {
-      
-        /**
-         * Подключение ядра битрикс
-         */
-        require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
-
-        /**
-         * Подключение модуля бронирования сайта
-         */
-        \Bitrix\Main\Loader::includeModule("travelsoft.booking.dev.tools");
     }
 }

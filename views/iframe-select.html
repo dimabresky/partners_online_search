@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>iframe select</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <style>
+            .form-group {
+                padding: 10px;
+            }
+            ul#iframe-values-list {
+                padding: 10px;
+                list-style: none;
+            }
+            ul#iframe-values-list li {
+                margin: 10px 0;
+            }
+            ul#iframe-values-list li:hover {
+                color: blue;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" id="iframe-value" name="iframe-value" class="form-control">
+                        <ul id="iframe-values-list">
+                            <li data-value="1">Один</li>
+                            <li data-value="2">Два</li>
+                            <li data-value="3">Три</li>
+                            <li data-value="12">Один Два</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+
+                var ul = document.getElementById("iframe-values-list");
+
+                var data = (function () {
+
+                    var data = [];
+
+                    var li = document.getElementById("iframe-values-list").querySelectorAll("li");
+
+                    for (var i = 0; i < li.length; i++) {
+
+                        data.push({
+                            value: li[i].dataset.value,
+                            text: li[i].innerText
+                        });
+                    }
+
+                    return data;
+                })();
+
+                document.getElementById("iframe-value").onkeydown = function () {
+
+                    var __this = this;
+                    
+                    setTimeout(function () {
+                        
+                        var value = __this.value;
+
+                        if (value) {
+
+                            ul.innerHTML = (function () {
+
+                                var regex = new RegExp(value, "i");
+
+                                var filter = data.filter(function (el) {
+
+                                    return regex.test(el.text);
+                                });
+
+                                if (filter.length) {
+                                    return filter.map(function (el) {
+                                        return "<li data-value=\"" + el.value +"\">" + el.text}</li>`;
+                                    }).join("");
+                                }
+
+                                return `<li id="no-match">no matches</li>`;
+
+                            })();
+
+                        } else {
+
+                            ul.innerHTML = (function () {
+
+                                return data.map(function (el) {
+                                    return `<li data-value="${el.value}">${el.text}</li>`;
+                                }).join("");
+
+                            })();
+
+                        }
+
+                    }, 100);
+                };
+            })();
+
+        </script>
+    </body>
+</html>

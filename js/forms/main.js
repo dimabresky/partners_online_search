@@ -3,7 +3,7 @@
  * @copyright (c) 2017, travelsoft 
  */
 
-$(document).ready(function () {
+(function () {
 
     "use strict";
 
@@ -25,13 +25,13 @@ $(document).ready(function () {
             function destroyAgeSelector($this) {
 
                 $this.find(".age-selector").each(function () {
-                    
+
                     try {
                         $(this).find("select.select2").select2("destroy");
                     } catch (e) {
                         console.warn(e.message);
                     }
-                    
+
                     $(this).remove();
                 });
             }
@@ -39,6 +39,8 @@ $(document).ready(function () {
             if (count > 0) {
 
                 $(this).siblings('.age-wrapper').each(function () {
+
+                    var ageSelectTitleTemplate = $(this).data("ageSelectTitleTemplate");
 
                     destroyAgeSelector($(this));
 
@@ -48,12 +50,12 @@ $(document).ready(function () {
 
                         for (var i = 1; i <= count; i++) {
 
-                            html += __createChildrenAgeBlock(i);
+                            html += __createChildrenAgeBlock(i, ageSelectTitleTemplate);
                         }
 
                         return html;
                     })());
-                    
+
                     __initSelect2($(this));
 
                     $(this).show();
@@ -67,6 +69,18 @@ $(document).ready(function () {
                 });
             }
 
+        },
+        
+        /**
+         * Осуществляет переход на страницу поиска
+         * @param {Event} e
+         * @param {String} url
+         * @returns {undefined}
+         */
+        search: function (e, url) {
+            
+            window.parent.location = url + "?" + $(this).closest("form").serialize();
+            
         }
 
     };
@@ -97,15 +111,27 @@ $(document).ready(function () {
                 $(this).parent().hide();
             });
         });
+        
+        // go to search page handler
+        tabArea.find("form").find("button").each(function () {
+            
+            var handlerName = $(this).data("onclick-handler-name");
+            if (handlerName) {
+                $(this).on("click", function (e) {
+                    __eventsHandlers[handlerName].apply(this, [e, $(this).data("url")]);
+                    e.preventDefault();
+                });
+            }
+        });
     }
-    
+
     /**
      * Инициализация select2
      * @param {$} parent
      * @returns {undefined}
      */
-    function __initSelect2 (parent) {
-        
+    function __initSelect2(parent) {
+
         parent.find('.select2').each(function () {
 
             var $this = $(this);
@@ -117,12 +143,12 @@ $(document).ready(function () {
                 $this.on("select2:select", function (e) {
                     __eventsHandlers[$this.data("onselect-handler-name")].apply(this, [e]);
                 });
-            }
 
+            }
 
         });
     }
-    
+
     /**
      * Инициализация работы календаря в форме поиска
      * @param {$} $this
@@ -136,13 +162,18 @@ $(document).ready(function () {
             endDate: $this.data('end-date'),
             autoApply: true,
             locale: {
-                format: "DD.MM.YYYY",
-                separator: ' - ',
+                format: $this.data("format"),
+                separator: $this.data("date-separator"),
                 daysOfWeek: moment.weekdaysMin(),
                 monthNames: moment.monthsShort(),
                 firstDay: moment.localeData().firstDayOfWeek(),
             }
         };
+
+        if ($this.val()) {
+            options.startDate = $this.val().split($this.data("date-separator"))[0];
+            options.endDate = $this.val().split($this.data("date-separator"))[1];
+        }
 
         $this.daterangepicker(options).on("show.daterangepicker", function (ev, picker) {
 
@@ -194,6 +225,7 @@ $(document).ready(function () {
             }
 
             textDuration.text(days);
+
         });
 
         $this.one("show.daterangepicker", function (ev, picker) {
@@ -204,9 +236,10 @@ $(document).ready(function () {
     /**
      * Создание html-блока для выбора возраста ребенка
      * @param {Number} index
+     * @param {String} titleTemplate
      * @returns {String}
      */
-    function __createChildrenAgeBlock(index) {
+    function __createChildrenAgeBlock(index, titleTemplate) {
 
         var options = (function () {
 
@@ -221,7 +254,7 @@ $(document).ready(function () {
         })();
 
         return `<div class="age-selector">
-                        ${index}-й ребенок
+                        ${titleTemplate.replace("{{index}}", index)}
                         <select data-index="${index}" class="select2 form-control" name="tpm_params[children_age][]">
                             ${options}
                         </select>
@@ -247,5 +280,5 @@ $(document).ready(function () {
             });
         }
     });
-});
+})();
 

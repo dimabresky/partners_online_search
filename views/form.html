@@ -11,7 +11,7 @@
     </head>
     <body>
 
-        <div class="container theme-blue">
+        <div class="container">
             <div class="row">
 
                 <ul class="nav nav-tabs">
@@ -42,7 +42,7 @@
                                     <label>
                                         Период проживания
                                     </label>
-                                    <input value="" name="date_range" data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control" >
+                                    <input data-format="DD.MM.YYYY" data-date-separator="-" data-duration-title="Продолжительность(дней)" value="15.12.2017-15.01.2018" name="date_range" type="text" class="datepicker form-control" >
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -70,7 +70,7 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                                    <div class="age-wrapper">
+                                    <div data-age-select-title="{{index}}-й ребенок" class="age-wrapper">
                                         
                                         <span class="age-title">Возраст детей</span>
                                         <hr>
@@ -108,7 +108,7 @@
                                     <label>
                                         Период проживания
                                     </label>
-                                    <input data-date-from="15.12.2017" date-date-to="25.12.2017" type="text" class="datepicker form-control">
+                                    <input data-format="DD.MM.YYYY" data-date-separator="-" data-duration-title="Продолжительность(дней)" value="15.12.2017-15.01.2018" name="date_range" type="text" class="datepicker form-control">
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -136,7 +136,7 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                                    <div class="age-wrapper">
+                                    <div data-age-select-title="{{index}}-й ребенок" class="age-wrapper">
                                         
                                         <span class="age-title">Возраст детей</span>
                                         <hr>
@@ -174,7 +174,7 @@
                                     <label>
                                         Период проживания
                                     </label>
-                                    <input data-date-from="15.12.2017" date-date-to="15.04.2018" type="text" class="datepicker form-control">
+                                    <input data-format="DD.MM.YYYY" data-date-separator="-" data-duration-title="Продолжительность(дней)" value="15.12.2017-15.01.2018" name="date_range" type="text" class="datepicker form-control">
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-6">
@@ -202,7 +202,7 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                                    <div class="age-wrapper">
+                                    <div data-age-select-title="{{index}}-й ребенок" class="age-wrapper">
                                         
                                         <span class="age-title">Возраст детей</span>
                                         <hr>
@@ -230,6 +230,6 @@
         <script src="../js/moment.min.js"></script>
         <script src="../js/moment_locales.min.js"></script>
         <script src="../js/daterangepicker.min.js"></script>
-        <script src="../js/forms/main.js?30"></script>
+        <script src="../js/forms/main.js?31"></script>
     </body>
 </html>
