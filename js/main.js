@@ -13,10 +13,16 @@
 var TravelsoftPartnersModule = {};
 
 /**
+ * Адрес сайта запросов модуля
+ * @type String
+ */
+TravelsoftPartnersModule.SITE_ADDRESS = "https://vetliva.ru";
+
+/**
  * Адрес запроса модуля
  * @type String
  */
-TravelsoftPartnersModule.REQUEST_URL = "//vetliva.ru/travelsoft.pm";
+TravelsoftPartnersModule.REQUEST_URL = TravelsoftPartnersModule.SITE_ADDRESS + "/travelsoft.pm";
 
 /**
  * Адрес загрузки js
@@ -137,6 +143,155 @@ TravelsoftPartnersModule.__screen = function (text) {
 };
 
 /**
+ * Установка высоты фрейма
+ * @param {DOMNode} id
+ * @returns {undefined}
+ */
+TravelsoftPartnersModule.__setIframeHeight = function (iframe) {
+    setTimeout(function () {
+        
+        var doc = iframe.contentDocument ? iframe.contentDocument :
+                iframe.contentWindow.document;
+        iframe.style.visibility = 'hidden';
+        iframe.style.height = doc.scrollingElement.scrollHeight + 4 + "px";
+        iframe.style.visibility = 'visible';
+    }, 100);
+
+}
+
+/**
+ * Контейнер методов и свойств для работы с результами поиска
+ * @type Object
+ */
+TravelsoftPartnersModule.__searchResult = {};
+
+/**
+ * Обработка ответа сервера
+ * @param {Object} resp
+ * @returns {undefined}
+ */
+TravelsoftPartnersModule.__searchResult.success = function (resp) {
+
+    if (resp.isError) {
+        console.warn(resp.errorMessage);
+        return;
+    }
+
+    TravelsoftPartnersModule.__searchResult.render(resp.data);
+
+};
+
+/**
+ * Отрисовка результатов поиска на сайте партнера
+ * @param {Object} data
+ * @returns {undefined}
+ */
+TravelsoftPartnersModule.__searchResult.render = function (data) {
+
+    var __screen = TravelsoftPartnersModule.__screen;
+
+    var iframe = document.createElement("iframe");
+
+    var iframeBodyContent = `<div class="container">
+                                                    ${(function (items) {
+
+        return items.map(function (item) {
+            return `<div class="row">
+                                                                                <div class="thumbnail row-flex row-flex-wrap mrtb-10">
+                                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                                            <img class="main-img" src="${__screen(TravelsoftPartnersModule.SITE_ADDRESS + item.imgSrc)}">
+                                                                                    </div>
+                                                                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 flex-col">
+
+                                                                                        <div class="name">${__screen(item.name)}</div>
+                                                                                        <div class="stars-block">
+                                                                                            ${(function (stars) {
+                var html = ``;
+                for (var i = 1; i <= stars; i++) {
+                    html += `<span class="glyphicon glyphicon-star" aria-hidden="true"></span>`;
+                }
+                return html;
+            })(item.stars)}
+                                                                                        </div>
+                                                                                        <ul>
+                                                                                            <li><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> ${__screen(item.address)}</li>
+                                                                                            <li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> ${__screen(item.text.distance.center)}</li>
+                                                                                            <li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> ${__screen(item.text.distance.airport)}</li>
+                                                                                        </ul>
+                                                                                        <div class="show-details-block flex-grow">
+                                                                                            <button class="btn btn-primary show-details" type="button">От 56 BYN/ночь <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></button>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>`;
+        }).join("");
+
+    })(data.items)}
+                                                    
+                                            </div>`;
+
+    var iframeStylesheets = (function () {
+
+        return [
+
+            TravelsoftPartnersModule.CSS_URL + "/bootstrap.min.css",
+            TravelsoftPartnersModule.CSS_URL + "/bootstrap-theme.min.css",
+            TravelsoftPartnersModule.CSS_URL + "/search-result/styles.css"
+
+        ].map(function (link) {
+            return `<link rel="stylesheet" href="${link}">`;
+        }).join("");
+
+    })();
+
+    var iframeScripts = (function () {
+        return "";
+//        return [
+//
+//            TravelsoftPartnersModule.JS_URL + "/jquery-3.2.1.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/bootstrap.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/select2.full.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/moment.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/moment_locales.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/daterangepicker.min.js",
+//            TravelsoftPartnersModule.JS_URL + "/forms/main.js?" + Math.random() * 100000
+//        ].map(function (src) {
+//            return `<script type="text/javascript" src="${src}"></script>`;
+//        }).join("");
+
+    })();
+
+    var iframeContent = (function () {
+
+        var html = TravelsoftPartnersModule.IFRAME_CONTENT_TEMPLATE;
+
+        return html.replace("{{stylesheets}}", iframeStylesheets)
+                .replace("{{content}}", iframeBodyContent)
+                .replace("{{scripts}}", iframeScripts);
+
+    })();
+
+    iframe.id = "search-result";
+
+    iframe.src = "about:blank";
+
+    iframe.style.width = "100%";
+
+    iframe.style.border = "none";
+
+    document.getElementById("search-result-iframe-block").replaceChild(
+            iframe, document.getElementById("search-result-iframe-block").querySelector("span"));
+
+    setTimeout(function () {
+        iframe.contentDocument.write(iframeContent);
+        TravelsoftPartnersModule.__setIframeHeight(iframe);
+    }, 100);
+
+
+};
+
+/**
  * Контейнер методов и свойств для работы с формой поиска
  * @type Object
  */
@@ -174,34 +329,34 @@ TravelsoftPartnersModule.__forms.render = function (data) {
                                                 <ul class="nav nav-tabs">
                                                     ${(function (data) {
 
-                                                        var html = "";
+        var html = "";
 
-                                                        for (var key in data) {
+        for (var key in data) {
 
-                                                            if (data.hasOwnProperty(key)) {
-                                                                html += `<li ${data[key].tabIsActive ? 'class="active"' : ''}><a data-toggle="tab" href="#${__screen(key)}-form-area">${__screen(data[key].tabTitle)}</a></li>`;
-                                                            }
+            if (data.hasOwnProperty(key)) {
+                html += `<li ${data[key].tabIsActive ? 'class="active"' : ''}><a data-toggle="tab" href="#${__screen(key)}-form-area">${__screen(data[key].tabTitle)}</a></li>`;
+            }
 
-                                                        }
+        }
 
-                                                        return html;
-                                                    })(data)}
+        return html;
+    })(data)}
                                                 </ul>
 
                                                 <div class="tab-content clearfix">
                                                     ${(function () {
 
-                                                    var html = "", key_;
+        var html = "", key_;
 
-                                                    for (var key in data) {
+        for (var key in data) {
 
-                                                        if (!data.hasOwnProperty(key)) {
-                                                            continue;
-                                                        }
+            if (!data.hasOwnProperty(key)) {
+                continue;
+            }
 
-                                                        key_ = __screen(key);
+            key_ = __screen(key);
 
-                                                        html += `<div class="tab-pane ${data[key].tabIsActive ? 'active' : ''}" id="${key_}-form-area">
+            html += `<div class="tab-pane ${data[key].tabIsActive ? 'active' : ''}" id="${key_}-form-area">
                                                             <form id="${key}-form">
                                                                 <div class="col-md-3 col-sm-6">
                                                                     <div class="form-group">
@@ -211,16 +366,16 @@ TravelsoftPartnersModule.__forms.render = function (data) {
                                                                         <select name="tpm_params[id][]" class="form-control select2">
                                                                             ${(function (objects) {
 
-                                                                                var html = "";
+                var html = "";
 
-                                                                                for (var i = 0; i < objects.length; i++) {
+                for (var i = 0; i < objects.length; i++) {
 
-                                                                                    html += `<option ${objects[i].isSelected ? 'selected=""' : ''} value="${__screen(objects[i].id)}">${__screen(objects[i].name)}</option>`;
-                                                                                }
-                                                                                
-                                                                                return html;
+                    html += `<option ${objects[i].isSelected ? 'selected=""' : ''} value="${__screen(objects[i].id)}">${__screen(objects[i].name)}</option>`;
+                }
 
-                                                                            })(data[key].objects.forSelect)}
+                return html;
+
+            })(data[key].objects.forSelect)}
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -320,31 +475,29 @@ TravelsoftPartnersModule.__forms.render = function (data) {
     var iframeContent = (function () {
 
         var html = TravelsoftPartnersModule.IFRAME_CONTENT_TEMPLATE;
-                
+
         return html.replace("{{stylesheets}}", iframeStylesheets)
                 .replace("{{content}}", iframeBodyContent)
                 .replace("{{scripts}}", iframeScripts);
-        
+
     })();
 
     iframe.id = "search-forms";
-    
-    iframe.src = "about:blank";
-    
-    iframe.style.width = "100%";
-    
-    iframe.style.border = "none";
-    
-    iframe.onscroll = function () {
-        console.log(1);
-    }
-    
-    document.getElementById("iframes-block").appendChild(iframe);
 
-    setTimeout(function (){
+    iframe.src = "about:blank";
+
+    iframe.style.width = "100%";
+
+    iframe.style.border = "none";
+
+    document.getElementById("search-forms-iframe-block").replaceChild(
+            iframe, document.getElementById("search-forms-iframe-block").querySelector("span"));
+
+    setTimeout(function () {
         iframe.contentDocument.write(iframeContent);
-    }, 500);
-    
+        TravelsoftPartnersModule.__setIframeHeight(iframe);
+    }, 100);
+
 };
 
 /**
@@ -389,7 +542,7 @@ TravelsoftPartnersModule.__forms.render = function (data) {
  *          searchResult: {
  *              
  *              // тип объектов поиска
- *              type: excursion || placement || sanatorium || transfers,
+ *              type: excursion || placement || sanatorium,
  *              
  *              // применить костомные стили
  *              // задавать в виде строки
@@ -420,24 +573,21 @@ TravelsoftPartnersModule.init = function (parameters) {
         if (typeof parameters.display.searchResult === "object" && parameters.display.searchResult) {
 
             // запрос данных для отображения результата поиска
-            this.__sendRequest("GetSearchResultRenderData", (function () {
+            this.__sendRequest("GetSearchResultRenderData", [(function () {
 
-                var queryParts = window.parent.location.search
-                        .replace("?", "")
-                        .split("&")
-                        .filter(function (element) {
-                            return element.length > 0 && element.indexOf("tpm_params") === 0;
-                        })
-                        .map(function (value) {
-                            return value.replace("tpm_params", "tpm_params[request]");
-                        });
+                    var queryParts = window.parent.location.search
+                            .replace("?", "")
+                            .split("&")
+                            .filter(function (element) {
+                                return element.length > 0 && element.indexOf("tpm_params") === 0;
+                            });
 
-                queryParts.push("tpm_params[type]=" + parameters.display.searchResult.type);
-                queryParts.push("tpm_params[number_per_page]=" + parameters.display.searchResult.numberPerPage);
+                    queryParts.push("tpm_params[type]=" + parameters.display.searchResult.type);
+                    queryParts.push("tpm_params[number_per_page]=" + parameters.display.searchResult.numberPerPage);
 
-                return queryParts.join("&");
+                    return queryParts.join("&");
 
-            })(), TravelsoftPartnersModule.__searchResult.success);
+                })()], TravelsoftPartnersModule.__searchResult.success);
 
         }
     };
@@ -468,7 +618,7 @@ TravelsoftPartnersModule.init = function (parameters) {
         ], (function (parameters) {
 
             return function (data) {
-                
+
                 // дополняем массив данных urls для переходов
                 var __data = (function (data, parameters) {
                     var __data = data;
@@ -479,17 +629,18 @@ TravelsoftPartnersModule.init = function (parameters) {
                     }
                     return __data;
                 })(data, parameters);
-                
-                
+
+
                 TravelsoftPartnersModule.__forms.success(__data);
-                __try2RunSearchResultRender(parameters);
             };
 
         })(parameters));
-
+        
+        __try2RunSearchResultRender.apply(TravelsoftPartnersModule, [parameters]);
+        
     } else {
 
-        __try2RunSearchResultRender(parameters);
+        __try2RunSearchResultRender.apply(TravelsoftPartnersModule, [parameters]);
     }
 };
 

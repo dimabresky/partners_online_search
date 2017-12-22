@@ -1,0 +1,96 @@
+
+/* 
+    Created on : 22.12.2017, 13:28:25
+    Author     : dimabresky
+*/
+
+html, body {
+    font-size: 16px;
+    line-height: 1.5;
+    height: 100%
+}
+
+.mrtb-10 {
+    margin: 10px 0;
+}
+
+.name {
+    font-weight: bold;
+}
+
+.main-img {
+    width: 100%;
+    height: 100%;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stars-block {
+    color: #ff8100;
+}
+
+.show-details-block {
+    position: relative;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.show-details {
+    height: 35px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.thumbnail {
+    margin-bottom: 0 !important;
+    width: 100%;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+/* flex row of bootstrap column */
+.row-flex, .row-flex > div[class*='col-'] {  
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex:1 1 auto;
+}
+
+.row-flex-wrap {
+    -webkit-flex-flow: row wrap;
+    align-content: flex-start;
+    flex:0;
+}
+
+.row-flex > div[class*='col-'] {
+    margin:-.2px; /* hack adjust for wrapping */
+}
+
+.flex-grow {
+    display: flex;
+    -webkit-flex: 2;
+    flex: 2;
+}
+
+.flex-col {
+    display: flex;
+    display: -webkit-flex;
+    flex: 1 100%;
+    flex-flow: column nowrap;
+}
+
+@media (max-width: 991px) {
+    .show-details {
+        position: relative;
+    }
+    .flex-grow {
+        display: block;
+    }
+}

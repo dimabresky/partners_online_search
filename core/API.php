@@ -9,11 +9,14 @@ namespace travesoft\pm;
  * @copyright (c) 2017,  travelsoft
  */
 class API implements interfaces\API {
-
+    
+    const DATE_SEPARATOR = "-";
+    
     public function __construct() {
 
         require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
         \Bitrix\Main\Loader::includeModule("travelsoft.booking.dev.tools");
+        \Bitrix\Main\Loader::includeModule("iblock");
     }
 
     /**
@@ -128,7 +131,7 @@ class API implements interfaces\API {
                         "tabTitle" => $titles[$type]["tab"],
                         "dates" => array(
                             "title" => "Период проживания",
-                            "separator" => "-",
+                            "separator" => self::DATE_SEPARATOR,
                             "format" => "DD.MM.YYYY",
                             "durationTitle" => "Продолжительность(дней)",
                             "inputValue" => $this->getDefDatesRange($type)
@@ -176,6 +179,113 @@ class API implements interfaces\API {
      */
     public function getSearchResultRenderData(array $parameters): array {
         
+        $request = null;
+        if ($parameters["adults"] > 0) {
+            $request["adults"] = $parameters["adults"];
+        }
+        if ($parameters["children"]) {
+            $request["children"] = $parameters["children"];
+            $request["children_age"] = $parameters["children_age"];
+        }
+        if (strlen($parameters["date_range"])) {
+            $dates = explode(self::DATE_SEPARATOR, $parameters['date_range']);
+            $request["date_from"] = strtotime($dates[0]);
+            $request["date_to"] = strtotime($dates[1]);
+        }
+        
+        $complex_logic = null;
+        if ($request) {
+            
+            $complex_logic = array(array(
+                "LOGIC" => "OR",
+                array("ID" => $parameters['id']),
+                // по городам
+                array("PROPERTY_TOWN" => $request['id']),
+                // по областям
+                array("PROPERTY_REGION" => $request['id']),
+                // по достопримечательностям
+                array("PROPERTY_SIGHT" => $request['id']),
+                // по мед. профилям
+                array("PROPERTY_TYPE" => $request['id'])
+            ));
+        }
+        
+        $arFilter = array(
+            "IBLOCK_ID" => \travelsoft\booking\Utils::getOpt($parameters["type"]),
+            "ACTIVE" => "Y"
+        );
+        
+        if ($complex_logic) {
+            $arFilter = array_merge($arFilter, $complex_logic);
+        }
+        
+        $arOrder = array("SORT" => "ASC");
+        
+        $arSelect = array(
+            "ID", 
+            "NAME",
+            "PREVIEW_PICTURES",
+            "PROPERTY_ADDRESS", 
+            "PROPERTY_DISTANCE_CENTER", 
+            "PROPERTY_DISTANCE_AIRPORT",
+            "PROPERTY_PICTURES",
+            "PROPERTY_CAT_ID"
+        );
+        
+        $arNav = array(
+            "nPageSize" => $parameters["number_per_page"] > 0 ? (int)$parameters["number_per_page"] : 10,
+            "iNumPage" => $parameters["page"] > 1 ? (int)$parameters["page"] : 1
+        );
+        
+        $dbList = $this->toCache("getSearchListResult", $arFilter, $arSelect, $arOrder, $arNav);
+        $result = array();
+        $starsMapping = array(
+            1491 => 5,
+            1492 => 4,
+            1493 => 3,
+            1494 => 2,
+            4169 => 0
+        );
+        while ($arRes = $dbList->Fetch()) {
+            
+            $imgSrc = "";
+            if ($arRes["PREVIEW_PICTURE"] > 0) {
+                $resize = \CFile::ResizeImageGet($arRes["PREVIEW_PICTURE"], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
+                $imgSrc = $resize['src'];
+            } elseif (!empty($arRes["PROPERTY_PICTURES_VALUE"])) {
+                $resize = \CFile::ResizeImageGet($arRes["PROPERTY_PICTURES_VALUE"][0], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
+                $imgSrc = $resize['src'];
+            }
+            
+            $result["items"][] = array(
+                "name" => $arRes["NAME"],
+                "stars" => $starsMapping[$arRes["PROPERTY_CAT_ID_VALUE"]],
+                "address" => $arRes["PROPERTY_ADDRESS_VALUE"],
+                "imgSrc" => $imgSrc,
+                "text" => array(
+                    "distance" => array(
+                        "center" => "Расстояние до центра " .$arRes["PROPERTY_DISTANCE_CENTER_VALUE"]. " км",
+                        "airport" => "Pасстояние до аэропорта " .$arRes["PROPERTY_DISTANCE_AIRPORT_VALUE"]. " км"
+                    )
+                )
+            );
+        }
+        $result["navPageCount"] = $dbList->NavPageCount;
+        $result["navPageNomer"] = $dbList->NavPageNomer;
+        $result["navRecordCount"] = $dbList->NavRecordCount;
+        return $result;
+    }
+    
+    /**
+     * @param type $arFilter
+     * @param type $arSelect
+     * @param type $arOrder
+     * @param type $arNav
+     */
+    protected function getSearchListResult ($arFilter, $arSelect, $arOrder, $arNav) {
+        
+        return \CIBlockElement::GetList($arOrder, $arFilter, false, $arNav, $arSelect);
+        
     }
     
     /**
@@ -196,13 +306,13 @@ class API implements interfaces\API {
      * @param array $arFilter
      * @param array $arSelect
      * @param array $arOrder
-     * @return array
+     * @param array $arNav
      */
-    protected function toCache($callback, $arFilter, $arSelect = array(), $arOrder = null) {
+    protected function toCache($callback, $arFilter, $arSelect = array(), $arOrder = null, $arNav = null) {
 
         $oCache = \Bitrix\Main\Data\Cache::createInstance();
 
-        $cacheDir = "/travelsoft/searchform/" . $arFilter["IBLOCK_ID"];
+        $cacheDir = "/travelsoft/partners_module/" . $arFilter["IBLOCK_ID"];
 
         $cacheTime = 3600;
 
@@ -211,7 +321,7 @@ class API implements interfaces\API {
         if ($oCache->initCache($cacheTime, $cacheid, $cacheDir)) {
             $arResult = $oCache->getVars();
         } else {
-            $arResult = $this->$callback($arFilter, $arSelect, $arOrder);
+            $arResult = $this->$callback($arFilter, $arSelect, $arOrder, $arNav);
             if ($arResult) {
 
                 if (defined("BX_COMP_MANAGED_CACHE")) {
