@@ -53,6 +53,28 @@ class Controller {
                 $this->_sendResponse($data, $error, $callback);
                 
                 break;
+                
+           case "GetOffersRenderData":
+                
+                $data = $this->_api->getOffersRenderData($params);
+
+                $error = "";
+                if (empty($data)) {
+                    $error = "Nothing found on your request";
+                }
+                $this->_sendResponse($data, $error, $callback);
+                
+                break;
+                
+            case "Booking":
+                
+                $error = "";
+                if (!$this->_api->booking($params)) {
+                    $error = $this->_api->bookError;
+                }
+                $this->_sendResponse(array(), $error, $callback);
+                
+                break;
             
             default: 
                 

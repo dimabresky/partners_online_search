@@ -4,7 +4,7 @@
         <title>iframe select</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
         <style>
             .form-group {
                 padding: 10px;
@@ -24,7 +24,7 @@
         </style>
     </head>
     <body>
-        <div class="container">
+        <div class="container" id="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
@@ -43,7 +43,8 @@
             (function () {
 
                 var ul = document.getElementById("iframe-values-list");
-
+                
+                
                 var data = (function () {
 
                     var data = [];
@@ -60,7 +61,34 @@
 
                     return data;
                 })();
-
+                
+                // set height of list
+                ul.style.height = (function () {
+                    
+                    var height = ul.querySelectorAll("li").length*40;
+                    
+                    if (height > 500) {
+                        ul.style["overflow-y"] = "scroll";
+                    }
+                    
+                    return height + "px";
+                    
+                })(ul);
+                
+                ul.onclick = function (e) {
+                    
+                    if (e.target.nodeName === 'LI') {
+                        
+                        ul.style.display = "none";
+                    }
+                };
+                
+                document.getElementById("iframe-value").onfocus = function () {
+        
+                    ul.style.display = "block";
+        
+                };
+                
                 document.getElementById("iframe-value").onkeydown = function () {
 
                     var __this = this;
@@ -82,7 +110,7 @@
 
                                 if (filter.length) {
                                     return filter.map(function (el) {
-                                        return "<li data-value=\"" + el.value +"\">" + el.text}</li>`;
+                                        return `<li data-value="${el.value}">${el.text}</li>`;
                                     }).join("");
                                 }
 
