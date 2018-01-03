@@ -42,7 +42,7 @@
                 /**
                  * Отрисовка фрейма формы
                  * @param {Object} options
-                 * @returns {undefined}
+                 * @returns {Element}
                  */
                 form: function (options) {
 
@@ -76,6 +76,8 @@
 
                         iframeScripts: (function () {
 
+                            options.parent_iframe_id = "search-forms";
+
                             return [
 
                                 Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
@@ -87,6 +89,7 @@
                                 Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
                                 Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
                                 Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                                Travelsoft.JS_URL + "/module/frames.js?" + Math.random() * 100000,
                                 Travelsoft.JS_URL + "/module/forms.js?" + Math.random() * 100000
                             ].map(function (src) {
                                 return `<script type="text/javascript" src="${src}"></script>`;
@@ -98,24 +101,29 @@
                     document.getElementById("search-forms-iframe-block").replaceChild(
                             iframe, document.getElementById("search-forms-iframe-block").querySelector("span"));
 
+                    return iframe;
                 },
 
                 /**
                  * Отрисовка фрейма select
                  * @param {Object} options
-                 * @returns {undefined}
+                 * @returns {Element}
                  */
                 select: function (options) {
 
                     var iframe = __createFrame({
                         styles: {
-                            border: "none",
                             position: "absolute",
-                            display: "none"
+                            display: "none",
+                            top: options.top + "px",
+                            left: options.left + "px",
+                            width: options.width + "px",
+                            border: "1px solid #ccc",
+                            "border-top": "none"
                         },
                         attributes: {
                             src: "about:blank",
-                            id: options.id,
+                            id: options.iframe_id,
                             scrolling: "yes"
                         },
                         iframeContent: ``,
@@ -145,17 +153,17 @@
                             ].map(function (src) {
                                 return `<script type="text/javascript" src="${src}"></script>`;
                             }).join("") + `<script>Travelsoft.select.init(${JSON.stringify({
+                                iframe_id: options.iframe_id, // iframe id
                                 data: options.data,
-                                fid: options.id, // iframe id
-                                el: options.el,
                                 css: options.css
                             })})</script>`;
 
                         })()
                     });
-                    
-                    
-                    document.getElementById("search-forms-iframe-block").appendChild(iframe);
+
+                    window.parent.document.body.appendChild(iframe);
+
+                    return iframe;
                 }
 
             },
@@ -163,7 +171,7 @@
             /**
              * Отрисовка результатов поиска
              * @param {Object} options
-             * @returns {undefined}
+             * @returns {Element}
              */
             searchResult: function (options) {
 
@@ -216,6 +224,8 @@
 
                 document.getElementById("search-result-iframe-block").replaceChild(
                         iframe, document.getElementById("search-result-iframe-block").querySelector("span"));
+
+                return iframe;
 
             }
         }

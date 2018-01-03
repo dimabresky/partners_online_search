@@ -6,10 +6,9 @@
 
 /**
  * @param {Travelsoft} Travelsoft
- * @param {jQuery} $
  * @returns {undefined}
  */
-(function (Travelsoft, $) {
+(function (Travelsoft) {
 
     "use strict";
 
@@ -17,9 +16,9 @@
 
         init: function (options) {
             
-            var event = new Event("change");
+            var data = options.data;
             
-            var iframe = window.parent.document.getElementById(options.fid);
+            var iframe = parent.document.getElementById(options.iframe_id);
 
             var container = document.createElement("div");
 
@@ -43,6 +42,7 @@
             form_group.className = "form-group";
 
             input.type = "text";
+            input.placeholder = "Вводите название...";
             input.id = "iframe-value";
             input.name = "iframe-value";
             input.className = "form-control";
@@ -60,7 +60,7 @@
 
                             var regex = new RegExp(value, "i");
 
-                            var filter = options.data.filter(function (el) {
+                            var filter = data.filter(function (el) {
 
                                 return regex.test(el.text);
                             });
@@ -79,7 +79,7 @@
 
                         ul.innerHTML = (function () {
 
-                            return options.data.map(function (el) {
+                            return data.map(function (el) {
                                 return `<li data-value="${el.value}">${el.text}</li>`;
                             }).join("");
 
@@ -95,20 +95,19 @@
 
                 var html = ``;
                 for (var i = 0; i < data.length; i++) {
-                    html = `<li data-value="${data[i].value}">${data[i].text}</li>`;
+                    html += `<li data-value="${data[i].value}">${data[i].text}</li>`;
                 }
 
                 return html;
 
-            })(options.data);
+            })(data);
 
             ul.onclick = function (e) {
                 if (e.target.nodeName === 'LI') {
                         
                     iframe.style.display = "none";
-                    options.el.value = e.target.dataset.value;
-                    options.text_container.innerText = e.target.innerText;
-                    options.el.dispatch(event);
+                    iframe.dataset.value = e.target.dataset.value;
+                    iframe.dataset.text = e.target.innerText;
                 }
                 
             };
@@ -118,9 +117,11 @@
             col.appendChild(form_group);
             row.appendChild(col);
             container.appendChild(row);
+            document.body.innerHTML = "";
+            document.body.appendChild(container);
             
         }
 
     };
 
-})(Travelsoft, jQuery);
+})(Travelsoft);

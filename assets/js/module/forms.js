@@ -95,14 +95,15 @@
     /**
      * Инициализация форм на вкладках
      * @param {$} tab
+     * @param {String} parent_iframe_id 
      * @returns {undefined}
      */
-    function __init(tab) {
+    function __init(tab, parent_iframe_id) {
 
         var tabArea = $(tab.attr("href"));
 
         // select init
-        __initSelect(tabArea);
+        __initSelect(tabArea, parent_iframe_id);
 
         // daterangepicker init
         tabArea.find('.datepicker').each(function () {
@@ -131,15 +132,74 @@
 
     /**
      * Инициализация select2
-     * @param {$} parent
+     * @param {$} tab
      * @returns {undefined}
      */
-    function __initSelect(parent) {
+    function __initSelect(tab) {
 
-        parent.find('.select2').each(function () {
+        tab.find('.objects').each(function () {
+
+//            var self = this;
+//
+//            var event = new Event("change");
+//
+//            var old_val = null;
+//
+//            var span = document.createElement("span");
+//
+//            var iframe_id = "iframe-select-" + self.id;
+//
+//            Travelsoft.frames.render.forms.select({
+//                iframe_id: iframe_id,
+//                top: $(this).offset().top + $(parent.document.getElementById("search-forms")).offset().top + 31,
+//                left: $(this).offset().left + $(parent.document.getElementById("search-forms")).offset().left,
+//                width: $(this).outerWidth(),
+//                data: (function (select) {
+//                    var data = [];
+//                    for (var i = 0; i < select.children.length; i++) {
+//                        data.push({value: select.children[i].value, text: select.children[i].innerText});
+//                    }
+//                    return data;
+//                })(self),
+//                select_id: self.id,
+//                css: ""
+//            });
+//            
+//            span.id = "span-for-" + self.id;
+//            span.className = "form-control";
+//            span.innerText = "Hi ))";
+//            span.style.cursor = "pointer";
+//            span.style.overflow = "hidden";
+//            span.style["line-height"] = "22px";
+//            span.onclick = function () {
+//
+//                var iframe = parent.document.getElementById(iframe_id);
+//                if (iframe.style.display === "none") {
+//                    iframe.style.display = "block";
+//                } else {
+//                    iframe.style.display = "none";
+//                }
+//
+//            };
+//
+//            self.style.display = "none";
+//
+//            self.parentNode.insertBefore(span, self);
+//
+//            setInterval(function () {
+//
+//                var iframe = parent.document.getElementById(iframe_id);
+//                if (iframe.dataset.value && iframe.dataset.value.value !== old_val) {
+//                    self.value = iframe.dataset.value.value;
+//                    document.getElementById("span-for-" + self.id).innerText = iframe.dataset.text;
+//                    old_val = self.value;
+//                    self.dispatchEvent(event);
+//                }
+//
+//            }, 100);
+
 
             var $this = $(this);
-
             $this.select2();
 
             if ($this.data("onselect-handler-name")) {
@@ -304,7 +364,7 @@
                                                                                                 <label>
                                                                                                     ${__screen(data[key].objects.title)}
                                                                                                 </label>
-                                                                                                <select name="tpm_params[id][]" class="form-control select2">
+                                                                                                <select name="tpm_params[id][]" id="objects" class="form-control objects">
                                                                                                     ${(function (objects) {
                     var html = "";
                     for (var i = 0; i < objects.length; i++) {
@@ -459,12 +519,12 @@
 
                                 if (tab.parent().hasClass('active')) {
 
-                                    __init(tab);
+                                    __init(tab, options.parent_iframe_id);
 
                                 } else {
                                     tab.one("shown.bs.tab", function () {
 
-                                        __init(tab);
+                                        __init(tab, options.parent_iframe_id);
 
                                     });
                                 }
