@@ -27,7 +27,7 @@
 
         // create datepicker
         __createDatepicker(tabArea);
-        
+
 
         // create children iframe
         __initChildrenPlugin(tabArea);
@@ -42,7 +42,7 @@
 
         });
     }
-    
+
     /**
      * Общая инициализация плагина
      * @param {Element} self
@@ -53,7 +53,7 @@
      * @param {String} css
      * @returns {Object}
      */
-    function __commonPluginInit (self, data, scrolling, defValue, pluginName, css) {
+    function __commonPluginInit(self, data, scrolling, defValue, pluginName, css) {
         var iframe_id = "iframe-plugin-" + self.id;
 
         var span = __initPluginSpan(self.id, defValue, iframe_id);
@@ -72,7 +72,7 @@
 
         return {iframe: iframe, span: span};
     }
-    
+
     /**
      * Инициализация плагина
      * @param {Element} self
@@ -211,21 +211,21 @@
             var span = document.createElement("span");
 
             var oldChildren = "", oldAge = "";
-            
+
             span.dataset.def_age = self.dataset.def_age;
-            
+
             pluginParts.span.parentNode.insertBefore(span, pluginParts.span);
-            
+
             if (self.dataset.def_age.length) {
                 __addAge(span, (function (def_age) {
 
-                var age = [];
+                    var age = [];
 
-                for (var i = 0; i < def_age.length; i++) {
-                    age.push(def_age[i]);
-                }
-                return age;
-            })(self.dataset.def_age.split(";")));
+                    for (var i = 0; i < def_age.length; i++) {
+                        age.push(def_age[i]);
+                    }
+                    return age;
+                })(self.dataset.def_age.split(";")));
             }
 
             pluginParts.iframe.dataset.children = "";
@@ -261,7 +261,7 @@
      * @returns {undefined}
      */
     function __createDatepicker(tab) {
-        
+
         var plugins = [];
 
         tab.find('input[data-need-create-iframe-datepicker=yes]').each(function () {
@@ -273,102 +273,27 @@
                 date_separator: $(self).data("date-separator"),
                 defValue: self.value || null
             }, false, self.value || null, "datepicker", "");
-            
+
             var old;
 
             pluginParts.iframe.dataset.daterange = self.value;
-            
-           
+
+
             // watch for frame dataset
             setInterval(function () {
 
                 if (pluginParts.iframe.dataset.daterange !== old) {
                     old = pluginParts.iframe.dataset.daterange;
                     pluginParts.span.innerText = pluginParts.iframe.dataset.daterange;
-                    self.value = pluginParts.iframe.dataset.daterange; 
+                    self.value = pluginParts.iframe.dataset.daterange;
                 }
-                
+
             }, 200);
 
             plugins.push(pluginParts);
 
         });
-//        
-//        var options = {
-//            minDate: new Date(),
-//            startDate: $this.data('start-date'),
-//            endDate: $this.data('end-date'),
-//            autoApply: true,
-//            locale: {
-//                format: $this.data("format"),
-//                separator: $this.data("date-separator"),
-//                daysOfWeek: moment.weekdaysMin(),
-//                monthNames: moment.monthsShort(),
-//                firstDay: moment.localeData().firstDayOfWeek(),
-//            }
-//        };
-//
-//        if ($this.val()) {
-//            options.startDate = $this.val().split($this.data("date-separator"))[0];
-//            options.endDate = $this.val().split($this.data("date-separator"))[1];
-//        }
-//
-//        $this.daterangepicker(options).on("show.daterangepicker", function (ev, picker) {
-//
-//            var calendars = picker.container.find('.calendars');
-//            var textDuration = calendars.find('.text-duration');
-//            var momentStartDate = moment(picker.startDate._d);
-//            var momentEndDate = moment(picker.endDate._d);
-//            var days = momentEndDate.diff(momentStartDate, 'days') + 1;
-//
-//            if (!textDuration.length) {
-//
-//                calendars.append('<div class="clearfix"></div><div class="text-center text-duration-area"><b>Продолжительность (дней): <span class="text-duration">0<span></b></div>');
-//                textDuration = calendars.find('.text-duration');
-//
-//                calendars.on('mouseenter.daterangepicker', 'td.available', function () {
-//
-//                    if (!$(this).hasClass('available'))
-//                        return;
-//
-//                    var title = $(this).attr('data-title');
-//                    var row = title.substr(1, 1);
-//                    var col = title.substr(3, 1);
-//                    var cal = $(this).parents('.calendar');
-//                    var date = cal.hasClass('left') ? picker.leftCalendar.calendar[row][col] : picker.rightCalendar.calendar[row][col];
-//                    var tmpEndDate = moment(date._d);
-//                    var tmpDays = tmpEndDate.diff(momentStartDate, 'days') + 1;
-//                    textDuration.text(tmpDays > 0 ? tmpDays : 0);
-//
-//                }).on('mouseleave.daterangepicker', 'td.available', function () {
-//
-//                    if (!momentEndDate) {
-//                        days = 0;
-//                    } else {
-//                        days = momentEndDate.diff(momentStartDate, 'days') + 1;
-//                    }
-//
-//                    textDuration.text(days);
-//
-//                }).on('mousedown.daterangepicker', 'td.available', function () {
-//
-//                    var title = $(this).attr('data-title');
-//                    var row = title.substr(1, 1);
-//                    var col = title.substr(3, 1);
-//                    var cal = $(this).parents('.calendar');
-//                    var date = cal.hasClass('left') ? picker.leftCalendar.calendar[row][col] : picker.rightCalendar.calendar[row][col];
-//                    momentStartDate = moment(date._d);
-//                    momentEndDate = null;
-//                });
-//            }
-//
-//            textDuration.text(days);
-//
-//        });
-//
-//        $this.one("show.daterangepicker", function (ev, picker) {
-//            $(picker.container).find(".end-date").removeClass(".end-date");
-//        });
+
     }
 
 
