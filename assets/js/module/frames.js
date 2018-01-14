@@ -154,10 +154,6 @@
 
                                 Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
                                 Travelsoft.JS_URL + "/bootstrap.min.js",
-                                Travelsoft.JS_URL + "/select2.full.min.js",
-                                Travelsoft.JS_URL + "/moment.min.js",
-                                Travelsoft.JS_URL + "/moment_locales.min.js",
-                                Travelsoft.JS_URL + "/daterangepicker.min.js",
                                 Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
                                 Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
                                 Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,

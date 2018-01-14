@@ -13,9 +13,6 @@
 
     "use strict";
 
-    // set russian locale of date staff 
-    moment.locale("ru");
-
     /**
      * Инициализация форм на вкладках
      * @param {$} tab
