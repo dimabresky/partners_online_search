@@ -13,6 +13,78 @@
     "use strict";
 
     /**
+     * @param {Object} options
+     * @returns {Element}
+     */
+    function __createPluginIframe(options) {
+        var iframe = __createFrame(__commonIframesOptions(options));
+
+        window.parent.document.body.appendChild(iframe);
+
+        return iframe;
+    }
+
+    /**
+     * @param {Object} options
+     * @returns {Object}
+     */
+    function __commonIframesOptions(options) {
+
+        return {
+            styles: {
+                position: "absolute",
+                display: "none",
+                top: options.top + "px",
+                left: options.left + "px",
+                width: options.width + "px",
+                height: options.height + "px",
+                border: "1px solid #ccc",
+                "box-sizing": "border-box",
+                "border-top": "none"
+            },
+            attributes: {
+                src: "about:blank",
+                id: options.iframe_id,
+                scrolling: options.scrolling ? "yes" : "no",
+                className: "iframe-plugin"
+            },
+            iframeContent: ``,
+            iframeStylesheets: (function () {
+
+                return [
+                    '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">',
+                    '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">'
+                ].join("") + [
+
+                    Travelsoft.CSS_URL + `/forms/${options.plugin_name}.css?` + Math.random() * 100000
+
+                ].map(function (link) {
+                    return `<link rel="stylesheet" href="${link}">`;
+                }).join("") + options.css;
+
+            })(),
+
+            iframeScripts: (function () {
+
+                return [
+
+                    Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + `/module/${options.plugin_name}.js?` + Math.random() * 100000
+                ].map(function (src) {
+                    return `<script type="text/javascript" src="${src}"></script>`;
+                }).join("") + `<script>Travelsoft.${options.plugin_name}.init(${JSON.stringify({
+                    iframe_id: options.iframe_id, // iframe id
+                    data: options.data
+                })})</script>`;
+
+            })()
+        };
+
+    }
+
+    /**
      * Контейнер методов для отрисовки iframes
      * @type Object
      */
@@ -105,65 +177,72 @@
                 },
 
                 /**
-                 * Отрисовка фрейма select
+                 * Возвращает объект фрейма select (like autocomplete or select2)
                  * @param {Object} options
                  * @returns {Element}
                  */
                 select: function (options) {
 
-                    var iframe = __createFrame({
-                        styles: {
-                            position: "absolute",
-                            display: "none",
-                            top: options.top + "px",
-                            left: options.left + "px",
-                            width: options.width + "px",
-                            border: "1px solid #ccc",
-                            "border-top": "none"
-                        },
-                        attributes: {
-                            src: "about:blank",
-                            id: options.iframe_id,
-                            scrolling: "yes"
-                        },
-                        iframeContent: ``,
-                        iframeStylesheets: (function () {
+                    options.plugin_name = "select";
 
-                            return [
-                                '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">',
-                                '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">'
-                            ].join("") + [
+                    return __createPluginIframe(options);
+                },
 
-                                Travelsoft.CSS_URL + "/forms/select.css"
+                /**
+                 * Возвращает отбъект фрейма calendar
+                 * @param {Object} options
+                 * @returns {Element}
+                 */
+                children: function (options) {
 
-                            ].map(function (link) {
-                                return `<link rel="stylesheet" href="${link}">`;
-                            }).join("");
+                    options.plugin_name = "children";
 
-                        })(),
+                    return __createPluginIframe(options);
+                },
 
-                        iframeScripts: (function () {
+                /**
+                 * Возвращает отбъект фрейма datepicker
+                 * @param {Object} options
+                 * @returns {Element}
+                 */
+                datepicker: function (options) {
 
-                            return [
+                    var iframe, __options;
 
-                                Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
-                                Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
-                                Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
-                                Travelsoft.JS_URL + "/module/select.js?" + Math.random() * 100000
-                            ].map(function (src) {
-                                return `<script type="text/javascript" src="${src}"></script>`;
-                            }).join("") + `<script>Travelsoft.select.init(${JSON.stringify({
-                                iframe_id: options.iframe_id, // iframe id
-                                data: options.data,
-                                css: options.css
-                            })})</script>`;
+                    options.plugin_name = "datepicker";
 
-                        })()
-                    });
+                    __options = __commonIframesOptions(options);
+                    __options.iframeStylesheets += `<link rel="stylesheet" href="${Travelsoft.CSS_URL + "/daterangepicker.min.css"}">` + __options.iframeStylesheets; 
+                    __options.iframeScripts = (function (options) {
+
+                        return [
+                            Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                            Travelsoft.JS_URL + "/moment.min.js",
+                            Travelsoft.JS_URL + "/moment_locales.min.js",
+                            Travelsoft.JS_URL + "/daterangepicker.min.js",
+                            Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + `/module/${options.plugin_name}.js?` + Math.random() * 100000
+                        ].map(function (src) {
+                            return `<script type="text/javascript" src="${src}"></script>`;
+                        }).join("") + `<script>Travelsoft.${options.plugin_name}.init(${JSON.stringify({
+                            iframe_id: options.iframe_id, // iframe id
+                            start_date: options.data.start_date,
+                            end_date: options.data.end_date,
+                            format: options.data.format,
+                            date_separator: options.data.date_separator,
+                            defValue: options.data.defValue
+                        })})</script>`;
+
+                    })(options);
+
+                    iframe = __createFrame(__options);
 
                     window.parent.document.body.appendChild(iframe);
 
                     return iframe;
+
                 }
 
             },
@@ -258,6 +337,5 @@
         return iframe;
 
     }
-    ;
 
 })(Travelsoft);

@@ -42,7 +42,7 @@
             form_group.className = "form-group";
 
             input.type = "text";
-            input.placeholder = "Вводите название...";
+            input.placeholder = "...";
             input.id = "iframe-value";
             input.name = "iframe-value";
             input.className = "form-control";
@@ -67,7 +67,7 @@
 
                             if (filter.length) {
                                 return filter.map(function (el) {
-                                    return `<li data-value="${el.value}">${el.text}</li>`;
+                                    return `<li data-span-text="${el.span_text}" data-value="${el.value}">${el.text}</li>`;
                                 }).join("");
                             }
 
@@ -80,7 +80,7 @@
                         ul.innerHTML = (function () {
 
                             return data.map(function (el) {
-                                return `<li data-value="${el.value}">${el.text}</li>`;
+                                return `<li data-span-text="${el.span_text}" data-value="${el.value}">${el.text}</li>`;
                             }).join("");
 
                         })();
@@ -95,7 +95,7 @@
 
                 var html = ``;
                 for (var i = 0; i < data.length; i++) {
-                    html += `<li data-value="${data[i].value}">${data[i].text}</li>`;
+                    html += `<li data-span-text="${data[i].span_text}" data-value="${data[i].value}">${data[i].text}</li>`;
                 }
 
                 return html;
@@ -107,7 +107,11 @@
                         
                     iframe.style.display = "none";
                     iframe.dataset.value = e.target.dataset.value;
-                    iframe.dataset.text = e.target.innerText;
+                    if (e.target.dataset.spanText && e.target.dataset.spanText.length) {
+                        iframe.dataset.text = e.target.dataset.spanText;
+                    } else {
+                        iframe.dataset.text = e.target.innerText;
+                    }
                 }
                 
             };

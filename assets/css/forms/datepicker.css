@@ -1,0 +1,13 @@
+
+/* 
+    Created on : 12.01.2018, 18:18:24
+    Author     : dimabresky
+*/
+
+.daterangepicker {
+    position: relative !important;
+}
+
+.dropdown-menu {
+    float: none !important;
+}

@@ -11,7 +11,7 @@ namespace travesoft\pm;
 class API implements interfaces\API {
 
     const DATE_SEPARATOR = "-";
-    
+
     protected $salt = "0ce42c55e079e52567257eec146a2583";
 
     public function __construct() {
@@ -37,7 +37,7 @@ class API implements interfaces\API {
 
         $active = strlen($parameters["active"]) ? $parameters["active"] : $parameters["type"][0];
 
-        
+
         $titles = array(
             "excursions" => array(
                 "tab" => "Экскурсии",
@@ -78,38 +78,39 @@ class API implements interfaces\API {
                             "separator" => self::DATE_SEPARATOR,
                             "format" => "DD.MM.YYYY",
                             "durationTitle" => "Продолжительность(дней)",
-                            "inputValue" => $parameters["date_range"] ? $parameters["date_range"] : $this->getDefDatesRange($type)
+                            "defValue" => $parameters["date_range"] ? $parameters["date_range"] : $this->getDefDatesRange($type)
                         ),
-                        "adults" => array("title" => "Взрослых", "inputValue" => $parameters["adults"] > 0 ? (int)$parameters["adults"] : 2),
+                        "adults" => array("title" => "Взрослых", "defValue" => $parameters["adults"] > 0 ? (int) $parameters["adults"] : 2),
                         "children" => array(
                             "title" => "Детей",
-                            "withoutChildrenTitle" => "Без детей",
-                            "ageSelectTitleTemplate" => "{{index}}-й ребенок",
-                            "ageTitle" => "Возраст детей",
-                            "inputValue" => $parameters["children"] > 0 ? (int)$parameters["children"] : 0
+                            "totalSelectTitle" => "Сколько?",
+                            "defValue" => $parameters["children"] > 0 ? (int) $parameters["children"] : 0
                         ),
-                        "children_age" => is_array($parameters["children_age"]) && !empty($parameters["children_age"]) ? $parameters["children_age"] : array(),
+                        "children_age" => array(
+                            "defValue" => is_array($parameters["children_age"]) && !empty($parameters["children_age"]) ? $parameters["children_age"] : array(),
+                        ),
                         "button" => array(
                             "title" => "Найти"
                         )
                     );
-                    
+
                     foreach ($result__ as $res) {
 
                         $arrname = array();
 
                         $arrname[] = $res["name"];
-                        
+
                         if ($res['city']) {
                             $arrname[] = $res['city'];
                         }
-                        
+
                         if ($res['region']) {
                             $arrname[] = $res['region'];
                         }
 
                         $result[$type]["objects"]["forSelect"][] = array(
                             "id" => $res["id"],
+                            "source_name" => $res["name"],
                             "name" => implode(", ", $arrname),
                             "isSelected" => in_array($res["id"], $parameters["id"])
                         );
@@ -144,7 +145,6 @@ class API implements interfaces\API {
             $dates = explode(self::DATE_SEPARATOR, $parameters['date_range']);
             $request["date_from"] = strtotime($dates[0]);
             $request["date_to"] = strtotime($dates[1]);
-            
         } else {
             $dates = explode(self::DATE_SEPARATOR, $this->getDefDatesRange($parameters["type"]));
             $request["date_from"] = strtotime($dates[0]);
@@ -187,100 +187,99 @@ class API implements interfaces\API {
         );
 
         return $this->toCache("getSearchListResult", $arFilter, $arSelect, $arOrder, $arNav, array(
-            "type" => $parameters["type"],
-            "agent" => $parameters["agent"],
-            "hash" => $parameters["hash"],
-            "request" => $request
+                    "type" => $parameters["type"],
+                    "agent" => $parameters["agent"],
+                    "hash" => $parameters["hash"],
+                    "request" => $request
         ));
     }
-    
+
     /**
      * Бронирование
      * @param array $parameters
      * @return boolean
      */
-    public function booking (array $parameters): bool {
-        
+    public function booking(array $parameters): bool {
+
         try {
             $bookData = $this->add2CartUnHashing($parameters["add2cart"])["data"];
-            $basketItemClass = "travelsoft\\booking\\".$bookData["type"]."\BasketItem";
+            $basketItemClass = "travelsoft\\booking\\" . $bookData["type"] . "\BasketItem";
             (new \travelsoft\booking\Basket)->add(new $basketItemClass($bookData));
             \LocalRedirect("https://vetliva.ru/booking/");
         } catch (\Exception $e) {
             (new Logger(__DIR__ . "log.txt"))->wrire($e->getMessage());
             $this->bookError = "Произошла ошибка при бронировании. Повторите бронирование через 5 минут.";
         }
-        
+
         return false;
     }
-    
+
     /**
      * Получение данных для отображения предложений
      * @param array $parameters
      * @return array
      */
     public function getOffersRenderData(array $parameters): array {
-                
+
         $type = $parameters["type"];
-        
-        $method = "get". ucfirst($type) . "OffersRenderData";
-        
+
+        $method = "get" . ucfirst($type) . "OffersRenderData";
+
         unset($parameters["type"]);
-        
-        return $this->$method((array)$this->getOffers(array(
-            "RETURN_RESULT" => "Y",
-            "FILTER_BY_PRICES_FOR_CITIZEN" => "N",
-            "TYPE" => $type,
-            "__BOOKING_REQUEST" => $parameters
-        )), $parameters);
-        
+
+        return $this->$method((array) $this->getOffers(array(
+                            "RETURN_RESULT" => "Y",
+                            "FILTER_BY_PRICES_FOR_CITIZEN" => "N",
+                            "TYPE" => $type,
+                            "__BOOKING_REQUEST" => $parameters
+                        )), $parameters);
     }
-    
-    protected function getCommonOffersRenderData (array $offers, array $parameters, string $type) : array {
-        
+
+    protected function getCommonOffersRenderData(array $offers, array $parameters, string $type): array {
+
         if (empty($offers)) {
             return array();
         }
-        
+
         $result = $arRates = $arServices = array();
-        
+
         foreach ($offers as $arrservdata) {
-            
+
             foreach ($arrservdata as $sid => $arrratesdata) {
-                
+
                 if (!isset($arService[$sid])) {
                     $arService[$sid] = current(\travelsoft\booking\datastores\ServicesDataStore::get(array("filter" => array("ID" => $sid), "select" => array("UF_NAME", "ID", "UF_PICTURES"))));
                 }
-                
+
                 foreach ($arrratesdata as $rid => $arrdata) {
-                    
+
                     if (!isset($arRates[$rid])) {
                         $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID", "UF_BR_PRICES"))));
                     }
 
                     $currency_id = $this->getCurrencyIdByCode("BYN");
                     $add2cart = array(
-                        "service_id" => (int)$sid,
-                        "rate_id" => (int)$rid,
-                        "adults" => (int)$parameters["adults"],
+                        "service_id" => (int) $sid,
+                        "rate_id" => (int) $rid,
+                        "adults" => (int) $parameters["adults"],
                         "currency" => $currency_id,
                         "can_buy" => true,
                         "date_from" => $parameters["date_from"],
                         "date_to" => $parameters["date_to"],
                         "duration" => $arrdata["DURATION"] + 1,
-                        "children" => (int)$parameters["children"],
+                        "children" => (int) $parameters["children"],
                         "children_age" => $parameters["children_age"],
                         "type" => $type,
                         "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id, true),
-                        "agent" => (int)$parameters["agent"]
+                        "agent" => (int) $parameters["agent"]
                     );
-                    
+
                     $img_src = null;
                     if (!empty($arService[$sid]["UF_PICTURES"])) {
                         $resize = \CFile::ResizeImageGet($arService[$sid]["UF_PICTURES"][0], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
                         $img_src = $resize['src'];
                     }
-                    
+
                     $result[] = array(
                         "date" => null,
                         "img_src" => $img_src,
@@ -290,61 +289,60 @@ class API implements interfaces\API {
                         "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id),
                         "add2cart" => $this->add2CartHashing($add2cart)
                     );
-                    
                 }
             }
         }
-        
+
         return $result;
     }
-    
-    protected function getPlacementsOffersRenderData (array $offers, array $parameters) : array {
-        
+
+    protected function getPlacementsOffersRenderData(array $offers, array $parameters): array {
+
         return $this->getCommonOffersRenderData($offers, $parameters, "placements");
     }
-    
-    protected function getSanatoriumOffersRenderData (array $offers, array $parameters) : array {
-        
+
+    protected function getSanatoriumOffersRenderData(array $offers, array $parameters): array {
+
         return $this->getCommonOffersRenderData($offers, $parameters, "sanatorium");
     }
 
-    protected function getExcursionsOffersRenderData (array $offers, array $parameters) : array {
-        
+    protected function getExcursionsOffersRenderData(array $offers, array $parameters): array {
+
         if (empty($offers)) {
             return array();
         }
-        
+
         $result = $arRates = array();
-        
+
         foreach ($offers as $arrservdata) {
-            
+
             foreach ($arrservdata as $sid => $arrtsdata) {
 
                 foreach ($arrtsdata as $timestamp => $arrratesdata) {
-                    
+
                     foreach ($arrratesdata as $rid => $arrdata) {
-                        
+
                         if (!isset($arRates[$rid])) {
                             $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID"))));
                         }
-                        
+
                         $currency_id = $this->getCurrencyIdByCode("BYN");
                         $add2cart = array(
-                            "service_id" => (int)$sid,
-                            "rate_id" => (int)$rid,
-                            "adults" => (int)$parameters["adults"],
+                            "service_id" => (int) $sid,
+                            "rate_id" => (int) $rid,
+                            "adults" => (int) $parameters["adults"],
                             "currency" => $currency_id,
                             "can_buy" => true,
                             "date_from" => $parameters["date_from"],
                             "date_to" => $parameters["date_to"],
                             "duration" => $arrdata["DURATION"],
-                            "children" => (int)$parameters["children"],
+                            "children" => (int) $parameters["children"],
                             "children_age" => $parameters["children_age"],
                             "type" => "excursions",
                             "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id, true),
-                            "agent" => (int)$parameters["agent"]
+                            "agent" => (int) $parameters["agent"]
                         );
-                        
+
                         $result[] = array(
                             "date" => date('d.m.Y', $timestamp),
                             "img_src" => null,
@@ -356,53 +354,50 @@ class API implements interfaces\API {
                         );
                     }
                 }
-                
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
      * @param string $code
      * @return int
      */
-    protected function getCurrencyIdByCode (string $code) {
-        
+    protected function getCurrencyIdByCode(string $code) {
+
         foreach (\travelsoft\booking\Utils::getAllCurrency() as $id => $arCurrency) {
             if ($arCurrency['iso'] === $code) {
                 return $id;
             }
         }
-        
+
         return 0;
-        
     }
-    
+
     /**
      * @param array $add2Cart
      * @return string
      */
-    protected function add2CartHashing (array $add2Cart) {
-        
+    protected function add2CartHashing(array $add2Cart) {
+
         return base64_encode(
                 serialize(array("data" => $add2Cart, "hash" => md5(serialize($add2Cart) . $this->salt))));
-        
     }
-    
+
     /**
      * @param string $hash
      * @return array
      * @throws \Exception
      */
-    protected function add2CartUnHashing (string $hash) {
-        
+    protected function add2CartUnHashing(string $hash) {
+
         $unsdata = unserialize(base64_decode($hash));
-        
+
         if (md5(serialize($unsdata["data"]) . $this->salt) === $unsdata["hash"]) {
             return $unsdata;
         }
-        
+
         throw new \Exception("Неверный хеш данных. Данные: " . json_encode($unsdata));
     }
 
@@ -429,14 +424,14 @@ class API implements interfaces\API {
         $dbList = \CIBlockElement::GetList(false, $arFilter, false, false, array("ID"));
 
         $result = array();
-        
+
         $other["request"]["id"] = array();
         while ($arRes = $dbList->Fetch()) {
             $other["request"]["id"][] = $arRes["ID"];
         }
-        
+
         if (!empty($other["request"]["id"])) {
-            
+
             $arOffers = $this->getOffers(array(
                 "RETURN_RESULT" => "Y",
                 "FILTER_BY_PRICES_FOR_CITIZEN" => "N",
@@ -444,13 +439,13 @@ class API implements interfaces\API {
                 "__BOOKING_REQUEST" => $other["request"],
                 "MP" => "Y"
             ));
-            
+
             $eid = array_keys($arOffers);
 
             $arFilter["ID"] = !empty($eid) ? $eid : -1;
-            
+
             $dbList2 = \CIBlockElement::GetList($arOrder, $arFilter, false, $arNav, $arSelect);
-            
+
             $starsMapping = array(
                 1491 => 5,
                 1492 => 4,
@@ -463,9 +458,9 @@ class API implements interfaces\API {
             $result["pager"]["page"] = (int) $dbList2->NavPageNomer;
             $result["pager"]["records"] = (int) $dbList2->NavRecordCount;
             $result["items"] = array();
-            
+
             if ($result["pager"]["records"] > 0) {
-                $hashIsValid = $this->checkAgentHash((string)$other["agent"], (string)$other["hash"]);
+                $hashIsValid = $this->checkAgentHash((string) $other["agent"], (string) $other["hash"]);
                 unset($other["request"]["id"]);
                 $request = array();
                 foreach ($other["request"] as $k => $v) {
@@ -485,13 +480,12 @@ class API implements interfaces\API {
                     if (!empty($arProperties["PICTURES"]["VALUE"])) {
                         $resize = \CFile::ResizeImageGet($arProperties["PICTURES"]["VALUE"][0], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
                         $imgSrc = $resize['src'];
-                    }
-                    elseif ($arFields["PREVIEW_PICTURE"]) {
+                    } elseif ($arFields["PREVIEW_PICTURE"]) {
                         $resize = \CFile::ResizeImageGet($arFields["PREVIEW_PICTURE"], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
                         $imgSrc = $resize['src'];
                     }
-                    
-                    
+
+
                     $result["items"][] = array(
                         "id" => $arFields["ID"],
                         "name" => $arFields["NAME"],
@@ -500,7 +494,7 @@ class API implements interfaces\API {
                         "text" => array(
                             "address" => $arProperties["ADDRESS"]["VALUE"] ? $arRes["ADDRESS"]["VALUE"] : null,
                             "route" => $arProperties["ROUTE"]["VALUE"] ? $arProperties["ROUTE"]["VALUE"] : null,
-                            "days" => $arProperties["DAYS"]["VALUE"] ? "Количество дней: " .  $arProperties["DAYS"]["VALUE"]  : null,
+                            "days" => $arProperties["DAYS"]["VALUE"] ? "Количество дней: " . $arProperties["DAYS"]["VALUE"] : null,
                             "duration_time" => $arProperties["DURATION_TIME"]["VALUE"] ? "Количество часов: " . $arProperties["DURATION_TIME"]["VALUE"] : null,
                             "distance" => array(
                                 "center" => $arProperties["DISTANCE_CENTER"]["VALUE"] ? "Расстояние до центра " . $arProperties["DISTANCE_CENTER"]["VALUE"] . " км" : null,
@@ -509,11 +503,10 @@ class API implements interfaces\API {
                             "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode("BYN")) . "/ночь"
                         ),
                         "request" => array_merge(array(
-                            "tpm_params[id][]=" . $arFields["ID"], 
+                            "tpm_params[id][]=" . $arFields["ID"],
                             "tpm_params[type]=" . $other["type"],
                             "tpm_params[agent]=" . ($hashIsValid ? $other["agent"] : ""),
-                            "tpm_params[hash]=" . ($hashIsValid ? $other["hash"] : "")), 
-                                $request)
+                            "tpm_params[hash]=" . ($hashIsValid ? $other["hash"] : "")), $request)
                     );
                 }
             }
@@ -521,26 +514,25 @@ class API implements interfaces\API {
 
         return $result;
     }
-    
+
     /**
      * @param string $agent
      * @param string $hash
      * @return boolean
      */
-    protected function checkAgentHash (string $agent, string $hash) {
-        
+    protected function checkAgentHash(string $agent, string $hash) {
+
         return md5($agent . $this->salt) === $hash;
-        
     }
-    
+
     /**
      * @param string $agent
      * @return string
      */
-    protected function agentHashing (string $agent) {
+    protected function agentHashing(string $agent) {
         return md5($agent . $this->salt);
     }
-    
+
     /**
      * Возвращает даты поиска по-умолчанию
      * @param string $type
@@ -711,7 +703,7 @@ class API implements interfaces\API {
                     $arID = (array) $arProperties["TOWN"]["VALUE"];
                     $arLinkCt[$arID[0]][] = $arFields["ID"];
                 }
-                
+
                 # регионы
                 if ($arProperties["REGION"]["VALUE"] > 0) {
                     $arLinkRegions[$arProperties["REGION"]["VALUE"]][] = $arFields["ID"];
