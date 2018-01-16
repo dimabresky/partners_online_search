@@ -1,5 +1,5 @@
 /**
- * redirect.html
+ * redirect
  * 
  * @author dimabresky
  * @copyright 2017, travelsoft
