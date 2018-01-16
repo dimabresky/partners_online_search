@@ -74,21 +74,6 @@
     }
     
     /**
-     * @param {String} text
-     * @param {String} value
-     * @param {Boolean} selected
-     * @returns {undefined}
-     */
-    function __createOption (text, value, selected) {
-        var option = document.createElement("option");
-        option.value = value;
-        option.text = text;
-        if (selected) {
-            option.selected = true;
-        }
-    }
-    
-    /**
      * @returns {Element}
      */
     function __createCol () {
@@ -119,9 +104,10 @@
             select.onchange = function () {
                 
                 var age = [];
-                document.querySelectorAll(".select-age").forEach(function (el) {
-                    age.push(el.value);
-                });
+                var selectAges = document.querySelectorAll(".select-age");
+                for (var i = 0; i < selectAges.length; i++) {
+                    age.push(selectAges[i].value);
+                }
                 
                 iframe.dataset.age = age.join(";");
             };

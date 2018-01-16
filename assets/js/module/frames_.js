@@ -57,7 +57,7 @@
                     '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">'
                 ].join("") + [
 
-                    Travelsoft.CSS_URL + `/forms/${options.plugin_name}.min.css?` + Math.random() * 100000
+                    Travelsoft.CSS_URL + `/forms/${options.plugin_name}.css?` + Math.random() * 100000
 
                 ].map(function (link) {
                     return `<link rel="stylesheet" href="${link}">`;
@@ -68,8 +68,11 @@
             iframeScripts: (function () {
 
                 return [
-                    
-                    Travelsoft.JS_URL + `/bundles/${options.plugin_name}.js`
+
+                    Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                    Travelsoft.JS_URL + `/module/${options.plugin_name}.js?` + Math.random() * 100000
                 ].map(function (src) {
                     return `<script type="text/javascript" src="${src}"></script>`;
                 }).join("") + `<script>Travelsoft.${options.plugin_name}.init(${JSON.stringify({
@@ -137,7 +140,7 @@
 
                                 Travelsoft.CSS_URL + "/select2.min.css",
                                 Travelsoft.CSS_URL + "/daterangepicker.min.css",
-                                Travelsoft.CSS_URL + "/forms/styles.min.css?" + Math.random() * 100000
+                                Travelsoft.CSS_URL + "/forms/styles.css?" + Math.random() * 100000
 
                             ].map(function (link) {
                                 return `<link rel="stylesheet" href="${link}">`;
@@ -151,7 +154,13 @@
 
                             return [
 
-                                Travelsoft.JS_URL + "/bundles/forms.js"
+                                Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                                Travelsoft.JS_URL + "/bootstrap.min.js",
+                                Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                                Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                                Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                                Travelsoft.JS_URL + "/module/frames.js?" + Math.random() * 100000,
+                                Travelsoft.JS_URL + "/module/forms.js?" + Math.random() * 100000
                             ].map(function (src) {
                                 return `<script type="text/javascript" src="${src}"></script>`;
                             }).join("") + `<script>Travelsoft.forms.init(${JSON.stringify(options)})</script>`;
@@ -212,7 +221,14 @@
                     __options.iframeScripts = (function (options) {
 
                         return [
-                            Travelsoft.JS_URL + `/bundles/${options.plugin_name}.js`
+                            Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                            Travelsoft.JS_URL + "/moment.min.js",
+                            Travelsoft.JS_URL + "/moment_locales.min.js",
+                            Travelsoft.JS_URL + "/daterangepicker.min.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + `/module/${options.plugin_name}.js?` + Math.random() * 100000
                         ].map(function (src) {
                             return `<script type="text/javascript" src="${src}"></script>`;
                         }).join("") + `<script>Travelsoft.${options.plugin_name}.init(${JSON.stringify({
@@ -266,7 +282,7 @@
                             '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">'
                         ].join("") + [
 
-                            Travelsoft.CSS_URL + "/search-result/styles.min.css?" + Math.random() * 100000
+                            Travelsoft.CSS_URL + "/search-result/styles.css?" + Math.random() * 100000
 
                         ].map(function (href) {
                             return `<link rel="stylesheet" href="${href}">`;
@@ -278,7 +294,12 @@
 
                         return [
 
-                            Travelsoft.JS_URL + "/bundles/search_result.js"
+                            Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                            Travelsoft.JS_URL + "/pagenavigator.min.js",
+                            Travelsoft.JS_URL + "/module/namespace.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/const.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/utils.js?" + Math.random() * 100000,
+                            Travelsoft.JS_URL + "/module/search_result.js?" + Math.random() * 100000
                         ].map(function (src) {
                             return `<script type="text/javascript" src="${src}"></script>`;
                         }).join("") + `<script>Travelsoft.searchResult.init(${JSON.stringify(opt)})</script>`;

@@ -22,12 +22,32 @@
         init: function (options) {
 
             var div = document.createElement("div");
-
+            
+            var divNotice = document.createElement("div");
+            
             var iframe = window.parent.document.getElementById(options.iframe_id);
-
-            div.id = "datepicker-shower";
-
+            
             var $div = $(div);
+            
+            div.id = "datepicker-shower";
+            
+            div.style.padding = "10px 0 0 0";
+            
+            // css loader
+            div.innerHTML = `<div id="floatBarsG">
+                                                <div id="floatBarsG_1" class="floatBarsG"></div>
+                                                <div id="floatBarsG_2" class="floatBarsG"></div>
+                                                <div id="floatBarsG_3" class="floatBarsG"></div>
+                                                <div id="floatBarsG_4" class="floatBarsG"></div>
+                                                <div id="floatBarsG_5" class="floatBarsG"></div>
+                                                <div id="floatBarsG_6" class="floatBarsG"></div>
+                                                <div id="floatBarsG_7" class="floatBarsG"></div>
+                                                <div id="floatBarsG_8" class="floatBarsG"></div>
+                                        </div>`;
+            
+            divNotice.id = "datepicker-notice";
+            divNotice.innerText = "Выберите две даты";
+            
             // set russian locale of date staff 
             moment.locale("ru");
 
@@ -37,6 +57,8 @@
                 minDate: new Date(),
                 startDate: options.start_date,
                 endDate: options.end_date,
+                linkedCalendars: false,
+                alwaysShowCalendars: true,
                 autoApply: true,
                 locale: {
                     format: options.format,
@@ -115,7 +137,16 @@
             $div.one("show.daterangepicker", function (ev, picker) {
                 $(picker.container).find(".end-date").removeClass(".end-date");
             });
-            $div.trigger("click");
+            
+            setTimeout(function (div) {
+                div.style.padding = 0;
+                div.style.margin = 0;
+                div.style.display = "none";
+                div.innerHTML = "";
+                document.body.insertBefore(divNotice, div);
+                div.dispatchEvent(new Event("click"));
+            }, 1500, div);
+            
             Travelsoft.utils.HWatcher.__parent = iframe;
             Travelsoft.utils.HWatcher.watch(document.body);
         }

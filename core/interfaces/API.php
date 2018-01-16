@@ -127,8 +127,13 @@ interface API {
     /**
      * Выполняет процедуру бронирования
      * @param array $parameters
-     * @return boolean
      */
-    public function booking (array $parameters): bool;
+    public function booking (array $parameters);
+    
+    /**
+     * Получение стилей для страницы
+     * @param array $parameters
+     */
+    public function getStylesheet (array $parameters);
             
 }

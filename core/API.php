@@ -13,6 +13,10 @@ class API implements interfaces\API {
     const DATE_SEPARATOR = "-";
 
     protected $salt = "0ce42c55e079e52567257eec146a2583";
+    
+    protected $_allowedDirTarget = array(
+        "redirect"
+    );
 
     public function __construct() {
 
@@ -197,21 +201,25 @@ class API implements interfaces\API {
     /**
      * Бронирование
      * @param array $parameters
-     * @return boolean
      */
-    public function booking(array $parameters): bool {
+    public function booking(array $parameters) {
 
         try {
             $bookData = $this->add2CartUnHashing($parameters["add2cart"])["data"];
             $basketItemClass = "travelsoft\\booking\\" . $bookData["type"] . "\BasketItem";
             (new \travelsoft\booking\Basket)->add(new $basketItemClass($bookData));
-            \LocalRedirect("https://vetliva.ru/booking/");
+            ob_start();
+            require "views/redirect/index.html";
+            $body = ob_get_clean();
+            header('Content-Type: text/html; charset=utf-8');
+            echo $body;
         } catch (\Exception $e) {
             (new Logger(__DIR__ . "log.txt"))->wrire($e->getMessage());
-            $this->bookError = "Произошла ошибка при бронировании. Повторите бронирование через 5 минут.";
+            header('Content-Type: text/html; charset=utf-8');
+            echo "Произошла ошибка при бронировании. Повторите бронирование через 5 минут.";
         }
 
-        return false;
+        die;
     }
 
     /**
@@ -294,6 +302,51 @@ class API implements interfaces\API {
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $parameters
+     */
+    public function getStylesheet(array $parameters) {
+        $file = __DIR__ . "/views/" . $parameters["target"] . "/styles.css";
+        if (
+                in_array($parameters["target"], $this->_allowedDirTarget) &&
+                $parameters["target"] &&
+                file_exists($file)
+        ) {
+            ob_start();
+            require $file;
+            $body = ob_get_clean();
+            header('Content-Type: text/css; charset=utf-8');
+            echo $body;
+            die;
+        }
+
+        header("HTTP/1.0 404 Not Found");
+        die;
+    }
+    
+    /**
+     * @param array $parameters
+     */
+    public function getScript(array $parameters) {
+        $file = __DIR__ . "/views/" . $parameters["target"] . "/script.js";
+        if (
+                in_array($parameters["target"], $this->_allowedDirTarget) &&
+                $parameters["target"] &&
+                file_exists($file)
+        ) {
+
+            ob_start();
+            require $file;
+            $body = ob_get_clean();
+            header('Content-Type: application/javascript; charset=utf-8');
+            echo $body;
+            die;
+        }
+
+        header("HTTP/1.0 404 Not Found");
+        die;
     }
 
     protected function getPlacementsOffersRenderData(array $offers, array $parameters): array {

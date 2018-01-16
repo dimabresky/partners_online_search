@@ -16,12 +16,12 @@
     "use strict";
 
     var __cache = {};
-        
+
     /**
      * @param {String} content
      * @returns {undefined}
      */
-    function __insert (content) {
+    function __insert(content) {
         document.body.innerHTML = content;
         Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById("search-result");
         Travelsoft.utils.HWatcher.watch(document.getElementById("container"));
@@ -38,11 +38,11 @@
 
         __cache[data.pager.page] = `<div class="container" id="container">
                                                         ${(function (items) {
-                                                            if (!items.length) {
-                                                                return `<div class="row">
+            if (!items.length) {
+                return `<div class="row">
                                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">По Вашему запросу ничего не найдено.</div>
                                                                                 </div>`;
-                                                            }
+            }
             return items.map(function (item) {
                 return `<div class="row">
                                                                                     <div class="thumbnail row-flex row-flex-wrap mrtb-10">
@@ -112,8 +112,8 @@
         })(data.pager)}
                                         </div>
                                                 </div>`;
-        
-                
+
+
         __insert(__cache[data.pager.page]);
     }
 
@@ -150,9 +150,9 @@
 
                 // success
                 return function (resp) {
-                    
+
                     var __resp = resp;
-                    
+
                     if (__resp.isError) {
                         console.warn(resp.errorMessage);
                         __render2Cache({
@@ -163,9 +163,9 @@
                             }
                         });
                     }
-                    
+
                     __resp.data.pager.numberPerPage = options.numberPerPage;
-                    
+
                     __render2Cache(__resp.data);
 
                 };
@@ -244,7 +244,7 @@
 
             var opt = options;
 
-                __renderPage(opt);
+            __renderPage(opt);
 
             // show offers
             $(document).on("click", ".show-offers", function (e) {
@@ -266,7 +266,7 @@
                         $offers.addClass("hidden");
                         __chevronUp($this);
                     }
-                    
+
                 } else {
 
                     // get offers
@@ -301,7 +301,7 @@
 
                     opt.page = $(this).data("page");
 
-                        __renderPage(opt);
+                    __renderPage(opt);
 
                 }
 
@@ -321,8 +321,8 @@
                     alert("Some error. Please, try later.");
                 }
 
-            });           
-            
+            });
+
         }
     };
 

@@ -108,7 +108,7 @@
 
                     if (__this.__prev !== object.scrollHeight) {
                         if (__this.__parent) {
-                            __this.__parent.style.height = object.scrollHeight + 50 + "px";
+                            __this.__parent.style.height = object.scrollHeight + 10 + "px";
                         }
                         __this.__prev = object.scrollHeight;
                     }

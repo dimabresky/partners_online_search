@@ -68,11 +68,19 @@ class Controller {
                 
             case "Booking":
                 
-                $error = "";
-                if (!$this->_api->booking($params)) {
-                    $error = $this->_api->bookError;
-                }
-                $this->_sendResponse(array(), $error, $callback);
+                $this->_api->booking($params);
+                
+                break;
+            
+            case "GetStylesheet":
+                
+                $this->_api->getStylesheet($params);
+                
+                break;
+            
+            case "GetScript":
+                
+                $this->_api->getScript($params);
                 
                 break;
             

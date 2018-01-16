@@ -13,24 +13,51 @@
 
     "use strict";
 
+    function __hideAllFrames() {
+
+        var frames = parent.document.querySelectorAll(".iframe-plugin");
+        var span = document.querySelectorAll(".span-plugin");
+        for (var i = 0; i < frames.length; i++) {
+            frames[i].style.display = "none";
+        }
+
+        for (var i = 0; i < span.length; i++) {
+
+            span[i].innerHTML = __screenCloser(span[i].innerHTML);
+        }
+    }
+
+    function __closer() {
+        return `<span class="iframe-closer">&times;</span>`;
+    }
+
+    /**
+     * @param {String} text
+     * @returns {String}
+     */
+    function __screenCloser(text) {
+        return text.replace(/<span class="iframe-closer">(.*)<\/span>/, "");
+    }
+
     /**
      * Инициализация форм на вкладках
      * @param {$} tab
+     * @param {Object} options
      * @returns {undefined}
      */
-    function __init(tab) {
+    function __init(tab, options) {
 
         var tabArea = $(tab.attr("href"));
 
         // create select
-        __initSelectPlugin(tabArea);
+        __initSelectPlugin(tabArea, options.selectIframeCss);
 
         // create datepicker
-        __createDatepicker(tabArea);
+        __createDatepicker(tabArea, options.datepickerIframeCss);
 
 
         // create children iframe
-        __initChildrenPlugin(tabArea);
+        __initChildrenPlugin(tabArea, options.childrenIframeCss);
 
         // go to search page
         tabArea.find("form").find("button").each(function () {
@@ -125,6 +152,7 @@
         span.innerText = defValue;
         span.style.cursor = "pointer";
         span.style.overflow = "hidden";
+        span.style.display = "inline-block";
         span.style["line-height"] = "22px";
         if (iframeLink) {
             span.dataset.iframeLink = iframeLink;
@@ -143,6 +171,7 @@
             top: $(options.self).offset().top + $(parent.document.getElementById("search-forms")).offset().top + 31,
             left: $(options.self).offset().left + $(parent.document.getElementById("search-forms")).offset().left,
             width: $(options.self).outerWidth(),
+            without: options.self.dataset.without === "yes",
             height: options.self.dataset.iframeSelectHeight ? options.self.dataset.iframeSelectHeight : 500,
             data: options.data,
             select_id: options.self.id,
@@ -154,22 +183,23 @@
     /**
      * Инициализация plugin select (like autocomplete or select2)
      * @param {$} tab
+     * @param {String} css
      * @returns {Array}
      */
-    function __initSelectPlugin(tab) {
+    function __initSelectPlugin(tab, css) {
 
         var plugins = [];
 
         tab.find('select[data-need-create-iframe-select=yes]').each(function () {
 
-            var self = this, old, pluginParts = __initPlugin(self, "select", true);
+            var self = this, old, pluginParts = __initPlugin(self, "select", true, css);
 
             // watch for frame dataset
             setInterval(function () {
 
                 if (pluginParts.iframe.dataset.value && pluginParts.iframe.dataset.value !== old) {
                     self.value = pluginParts.iframe.dataset.value;
-                    pluginParts.span.innerText = pluginParts.iframe.dataset.text;
+                    pluginParts.span.innerHTML = pluginParts.iframe.dataset.text;
                     old = self.value;
                     self.dispatchEvent(new Event("change"));
                 }
@@ -198,15 +228,16 @@
     /**
      * Инициализация plugin children
      * @param {$} tab
+     * @param {Object} css
      * @returns {Array}
      */
-    function __initChildrenPlugin(tab) {
+    function __initChildrenPlugin(tab, css) {
 
         var plugins = [];
 
         tab.find('select[data-need-create-iframe-children=yes]').each(function () {
 
-            var self = this, pluginParts = __initPlugin(self, "children", false);
+            var self = this, pluginParts = __initPlugin(self, "children", false, css);
 
             var span = document.createElement("span");
 
@@ -236,7 +267,7 @@
 
                 if (pluginParts.iframe.dataset.children !== oldChildren) {
                     oldChildren = pluginParts.iframe.dataset.children;
-                    pluginParts.span.innerText = pluginParts.iframe.dataset.children;
+                    pluginParts.span.innerHTML = pluginParts.iframe.dataset.children + __closer();
                     self.value = oldChildren;
                     self.dispatchEvent(new Event("change"));
                 }
@@ -258,9 +289,10 @@
     /**
      * Инициализация работы календаря в форме поиска
      * @param {$} tab
+     * @param {Object} css
      * @returns {undefined}
      */
-    function __createDatepicker(tab) {
+    function __createDatepicker(tab, css) {
 
         var plugins = [];
 
@@ -272,19 +304,18 @@
                 format: $(self).data("format"),
                 date_separator: $(self).data("date-separator"),
                 defValue: self.value || null
-            }, false, self.value || null, "datepicker", "");
+            }, false, self.value || null, "datepicker", css);
 
             var old;
 
             pluginParts.iframe.dataset.daterange = self.value;
-
 
             // watch for frame dataset
             setInterval(function () {
 
                 if (pluginParts.iframe.dataset.daterange !== old) {
                     old = pluginParts.iframe.dataset.daterange;
-                    pluginParts.span.innerText = pluginParts.iframe.dataset.daterange;
+                    pluginParts.span.innerHTML = pluginParts.iframe.dataset.daterange;
                     self.value = pluginParts.iframe.dataset.daterange;
                 }
 
@@ -360,7 +391,7 @@
                                                                         <label>
                                                                             ${__screen(data[key].adults.title)}
                                                                         </label>
-                                                                        <select data-iframe-select-height="200" data-need-create-iframe-select="yes" id="${key_}-adults-select" name="tpm_params[adults]" class="form-control select2">
+                                                                        <select data-without="yes" data-iframe-select-height="200" data-need-create-iframe-select="yes" id="${key_}-adults-select" name="tpm_params[adults]" class="form-control select2">
                                                                             <option data-span-text="1" ${Number(data[key].adults.defValue) === 1 ? `selected=""` : ``} value="1">1</option>
                                                                             <option data-span-text="2" ${Number(data[key].adults.defValue) === 2 ? `selected=""` : ``} value="2">2</option>
                                                                             <option data-span-text="3" ${Number(data[key].adults.defValue) === 3 ? `selected=""` : ``} value="3">3</option>
@@ -454,29 +485,25 @@
 
                                     if (tab.parent().hasClass('active')) {
 
-                                        __init(tab, options.parent_iframe_id);
+                                        __init(tab, options);
 
                                     } else {
                                         tab.one("shown.bs.tab", function () {
 
-                                            __init(tab, options.parent_iframe_id);
+                                            __init(tab, options);
 
                                         });
                                     }
                                 });
 
+                                // off iframes plugin
+                                parent.document.addEventListener("click", function () {
+                                    __hideAllFrames();
+                                });
                                 // toggle shown iframes plugin
                                 document.addEventListener("click", function (e) {
 
                                     var iframe, shown;
-
-                                    function __hideAllFrames() {
-
-                                        parent.document.querySelectorAll(".iframe-plugin").forEach(function (el) {
-                                            el.style.display = "none";
-                                        });
-
-                                    }
 
                                     if (
                                             e.target.nodeName === "SPAN" &&
@@ -489,6 +516,7 @@
                                         __hideAllFrames();
                                         if (!shown) {
                                             iframe.style.display = "block";
+                                            e.target.innerHTML = e.target.innerText + __closer();
                                         }
 
                                         return;
