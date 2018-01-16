@@ -11,16 +11,21 @@ namespace travesoft\pm;
 class API implements interfaces\API {
 
     const DATE_SEPARATOR = "-";
-
-    protected $salt = "0ce42c55e079e52567257eec146a2583";
+    
+    /**
+     * "Соль" обязательно генерировать для каждого проекта
+     * @var string
+     */
+    protected static $salt = "0ce42c55e079e52567257eec146a2583";
     
     protected $_allowedDirTarget = array(
-        "redirect"
+        "redirect",
+        "code_generator"
     );
 
     public function __construct() {
 
-        require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
+        require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
         \Bitrix\Main\Loader::includeModule("travelsoft.booking.dev.tools");
         \Bitrix\Main\Loader::includeModule("iblock");
     }
@@ -582,8 +587,8 @@ class API implements interfaces\API {
      * @param string $agent
      * @return string
      */
-    protected function agentHashing(string $agent) {
-        return md5($agent . $this->salt);
+    public static function agentHashing(string $agent) {
+        return md5($agent . self::salt);
     }
 
     /**
