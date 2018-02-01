@@ -12,7 +12,7 @@
 
     "use strict";
 
-    function __initInput(data, parent) {
+    function __initInput(data, parent, ul) {
 
         var input = document.createElement("input");
 
@@ -121,7 +121,7 @@
             };
 
             if (!options.without) {
-                __initInput(data, form_group);
+                __initInput(data, form_group, ul);
             }
 
             form_group.appendChild(ul);

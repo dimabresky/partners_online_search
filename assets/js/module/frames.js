@@ -151,6 +151,8 @@
 
                             return [
 
+                                Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                                Travelsoft.JS_URL + "/bootstrap.min.js",
                                 Travelsoft.JS_URL + "/bundles/forms.js"
                             ].map(function (src) {
                                 return `<script type="text/javascript" src="${src}"></script>`;
@@ -212,6 +214,10 @@
                     __options.iframeScripts = (function (options) {
 
                         return [
+                            Travelsoft.JS_URL + `/jquery-3.2.1.min.js`,
+                            Travelsoft.JS_URL + `/moment.min.js`,
+                            Travelsoft.JS_URL + `/moment_locales.min.js`,
+                            Travelsoft.JS_URL + `/daterangepicker.min.js`,
                             Travelsoft.JS_URL + `/bundles/${options.plugin_name}.js`
                         ].map(function (src) {
                             return `<script type="text/javascript" src="${src}"></script>`;
