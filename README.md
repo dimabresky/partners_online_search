@@ -3,6 +3,7 @@
 
 Для установки модуля скопируйте файлы в папку travelsoft.pm в корне сайта или клонируйте репозиторий в эту папку
 ```
+mkdir travelsoft.pm
 cd travelsoft.pm
 clone https://github.com/dimabresky/travelsoft.pm.git
 ```
