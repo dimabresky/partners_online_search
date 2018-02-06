@@ -213,7 +213,7 @@
                         html += `<li><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Количество часов: ${__screen(text.duration_time)}</li>`;
                     }
                     if (item.text.distance.minsk) {
-                        html += `<li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Расстояние до Минска: ${__screen(item.text.distance.center)} км</li>`;
+                        html += `<li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Расстояние до Минска: ${__screen(item.text.distance.minsk)} км</li>`;
                     }
                     if (item.text.distance.center) {
                         html += `<li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Расстояние до цента: ${__screen(item.text.distance.center)} км</li>`;
@@ -568,7 +568,7 @@
                                                                             ${(function (servicesGroup) {
                             var html = '';
                             for (var service_id in servicesGroup) {
-                                html += `<li><div><img src="${Travelsoft.SITE_ADDRESS}/local/templates/travelsoft/images/icon-check.png" alt=""></div>${servicesGroup[service_id].TITLE} ${servicesGroup[service_id].PAID ? `<a data-content="За дополнительную плату">(<i class="fa fa-dollar"></i>)</a>` : ``}</li>`;
+                                html += `<li><div><img src="${Travelsoft.SITE_ADDRESS}/local/templates/travelsoft/images/icon-check.png" alt=""></div>${servicesGroup[service_id].TITLE}</li>`;
                             }
                             return html;
                         })(services.SERVICES_GROUP[section_id])}
@@ -743,7 +743,7 @@
 
                     __chevronUp($this);
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка предложений. Пожалуйста, подождите..."}, $parent);
 
                     // get offers
                     Travelsoft.utils.sendRequest("GetOffersRenderData", [$this.data("offers-request").join("&")], (function ($parent) {
@@ -753,7 +753,7 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация не найдена."}, $parent);
+                                __renderInfoBlock({message: "Предложения отсутствуют."}, $parent);
                                 return;
                             }
 
@@ -805,7 +805,7 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация не найдена."}, $parent);
+                                __renderInfoBlock({message: "Информация отсутствует."}, $parent);
                                 return;
                             }
 
@@ -846,7 +846,7 @@
                                 __chevronDownAll();
                             });
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка карты. Пожалуйста, подождите..."}, $parent);
                     
                     // get detail description
                     Travelsoft.utils.sendRequest("GetDetailMapRenderData", [$this.data("request").join("&")], (function ($parent) {
@@ -856,7 +856,7 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация не найдена."}, $parent);
+                                __renderInfoBlock({message: "Информация отсутствует."}, $parent);
                                 return;
                             }
 
@@ -897,7 +897,7 @@
                                 __chevronDownAll();
                             });
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка видео. Пожалуйста, подождите..."}, $parent);
                     
                     // get video
                     Travelsoft.utils.sendRequest("GetDetailVideoRenderData", [$this.data("request").join("&")], (function ($parent) {
@@ -907,10 +907,15 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация не найдена."}, $parent);
+                                __renderInfoBlock({message: "Видео отсутствует."}, $parent);
                                 return;
                             }
-
+                            
+                            if (!resp.data.code) {
+                                __renderInfoBlock({message: "Видео отсутствует."}, $parent);
+                                return;
+                            }
+                            
                             __renderDetailVideo(resp.data, $parent, function () {
                                 __removeSpiner($this);
                             });
