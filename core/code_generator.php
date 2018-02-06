@@ -31,7 +31,7 @@ ob_start();
 
 require "views/code_generator/index.html";
 
-$body = str_replace(array("{{agent_id}}", "{{hash}}"), array($agent_id, $hash), ob_get_clean());
+$body = str_replace(array("{{agent}}", "{{hash}}"), array($agent_id, $hash), ob_get_clean());
 
 echo $body;
 

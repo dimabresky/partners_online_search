@@ -6,18 +6,18 @@
 
             <form id="code-generator">
 
-                <h3>Генерировать код вставки для:</h3>
+                <h3>Генерировать код вставки партнерского модуля для:</h3>
 
                 <div class="radio">
                     <label>
-                        <input class="toggle" type="radio" data-target="sub-block~forms-options" name="render_type" value="1">
+                        <input class="toggle" type="radio" data-target="sub-block~forms-options" name="render_type" value="forms">
                         Формы поиска
                     </label>
                 </div>
 
                 <div class="radio">
                     <label>
-                        <input class="toggle" type="radio" data-target="sub-block~search-result-options" name="render_type" value="2">
+                        <input class="toggle" type="radio" data-target="sub-block~search-result-options" name="render_type" value="search_result">
                         Результатов поиска
                     </label>
                 </div>
@@ -26,38 +26,50 @@
 
                     <div class="toggle-area" style="display: none" id="forms-options">
 
-                        <h3>Настройка формы поиска</h3>
+                        <h3>Настройка отображения формы поиска</h3>
 
                         <div class="checkbox">
                             <label>
-                                <input class="toggle" data-taget="sub-block~forms-options~sanatorium-url" type="checkbox" name="tabs" value="placements">
+                                <input type="checkbox" name="tabs" value="placements">
                                 Проживание
                             </label>
-                            <div class="toggle-area" style="display: none" id="placements-url">
+                            <label>
+                                <input type="radio" name="active_tab" value="placements">
+                                Активная вкладка по-умолчанию
+                            </label>
+                            <div id="placements-url">
                                 <label>Полный url-адрес для перехода на страницу поиска проживания</label>
-                                <input type="text" name="placements_url" class="form-control">
+                                <input placeholder="https://example.com" type="text" name="placements_url" class="form-control">
                             </div>
                         </div>
 
-                        <div class="checkbox">
+                        <div class="checkbox" style="margin-top: 20px">
                             <label>
-                                <input class="toggle" data-taget="sub-block~forms-options~sanatorium-url" type="checkbox" name="tabs" value="sanatorium">
+                                <input type="checkbox" name="tabs" value="sanatorium">
                                 Санатории
                             </label>
-                            <div class="toggle-area" style="display: none" id="sanatorium-url">
+                            <label>
+                                <input type="radio" name="active_tab" value="sanatorium">
+                                Активная вкладка по-умолчанию
+                            </label>
+                            <div id="sanatorium-url">
                                 <label>Полный url-адрес для перехода на страницу поиска санаториев</label>
-                                <input type="text" name="sanatorium_url" class="form-control">
+                                <input placeholder="https://example.com" type="text" name="sanatorium_url" class="form-control">
                             </div>
                         </div>
 
-                        <div class="checkbox">
+                        <div class="checkbox" style="margin-top: 20px">
                             <label>
-                                <input class="toggle" data-taget="sub-block~forms-options~excursions-url" type="checkbox" name="tabs" value="excursions">
+                                <input type="checkbox" name="tabs" value="excursions">
                                 Экскурсионные туры
                             </label>
-                            <div class="toggle-area" style="display: none" id="excursions-url">
+                            <label>
+                                <input type="radio" name="active_tab" value="excursions">
+                                Активная вкладка по-умолчанию
+                            </label>
+                            <div id="excursions-url">
                                 <label>Полный url-адрес для перехода на страницу поиска экскурсионных туров</label>
-                                <input type="text" name="excursions_url" class="form-control">
+                                <input placeholder="https://example.com" type="text" name="excursions_url" class="form-control">
                             </div>
                         </div>
 
@@ -66,7 +78,8 @@
                     <div class="toggle-area" style="display: none" id="search-result-options">
 
                         <h3>Настройка результатов поиска по:</h3>
-
+                        <input name="agent" type="hidden" value="{{agent}}">
+                        <input name="hash" type="hidden" value="{{hash}}">
                         <div class="radio">
                             <label>
                                 <input class="toggle" type="radio" data-target="sub-block~search-result-options~placements-number-per-page" name="result" value="placements">
@@ -116,7 +129,7 @@
 
                     <div id="generator-block">
                         <button type="button" class="btn btn-primary" id="generator">Сгенерировать код для вставки</button>
-                        <textarea class="form-control"></textarea>
+                        <textarea rows="20" style="margin: 20px 0" id="code-area" class="form-control"></textarea>
                     </div>
 
                 </div>
@@ -130,5 +143,5 @@
 
 <script src="/travelsoft.pm/?method=GetScript&tpm_params[target]=code_generator"></script>
 <script>
-    Travelsoft.CodeGenerator({});
+    Travelsoft.CodeGenerator();
 </script>

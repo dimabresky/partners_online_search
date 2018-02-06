@@ -360,7 +360,7 @@
             </div>
         `);
 
-        __cache[page ? page : 1] = $("body").html();
+        
 
         $parent.find(".offers").removeClass("hidden");
 
@@ -633,7 +633,7 @@
             </div>
         `);
 
-        __cache[page ? page : 1] = $("body").html();
+        
 
         $parent.find(".detail-desc-block").removeClass("hidden");
 
@@ -666,7 +666,7 @@
                                         </div>
                                     </div>`);
 
-        __cache[page ? page : 1] = $("body").html();
+        
 
         $parent.find(".show-on-map-block").removeClass("hidden");
 
@@ -696,7 +696,7 @@
                                         </div>
                                     </div>`);
 
-        __cache[page ? page : 1] = $("body").html();
+        
 
         $parent.find(".video-block").removeClass("hidden");
 
@@ -753,7 +753,9 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Предложения отсутствуют."}, $parent);
+                                __renderInfoBlock({message: "Предложения отсутствуют."}, $parent, function () {
+                                __removeSpiner($this);
+                            });
                                 return;
                             }
 
@@ -805,7 +807,9 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация отсутствует."}, $parent);
+                                __renderInfoBlock({message: "Информация отсутствует."}, $parent, function () {
+                                __removeSpiner($this);
+                            });
                                 return;
                             }
 
@@ -856,7 +860,9 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Информация отсутствует."}, $parent);
+                                __renderInfoBlock({message: "Информация отсутствует."}, $parent, function () {
+                                __removeSpiner($this);
+                            });
                                 return;
                             }
 
@@ -907,12 +913,16 @@
 
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
-                                __renderInfoBlock({message: "Видео отсутствует."}, $parent);
+                                __renderInfoBlock({message: "Видео отсутствует."}, $parent, function () {
+                                __removeSpiner($this);
+                            });
                                 return;
                             }
                             
                             if (!resp.data.code) {
-                                __renderInfoBlock({message: "Видео отсутствует."}, $parent);
+                                __renderInfoBlock({message: "Видео отсутствует."}, $parent, function () {
+                                __removeSpiner($this);
+                            });
                                 return;
                             }
                             

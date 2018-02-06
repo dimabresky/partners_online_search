@@ -707,7 +707,7 @@ class API implements interfaces\API {
      * @return string
      */
     public static function agentHashing(string $agent) {
-        return md5($agent . self::salt);
+        return md5($agent . self::$salt);
     }
 
     /**
