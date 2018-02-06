@@ -1,10 +1,8 @@
 # travelsoft partners module
 Поиск тур. услуг на сайте партнера
 
-Для установки модуля скопируйте файлы в папку travelsoft.pm в корне сайта или клонируйте репозиторий в эту папку
+Для установки модуля скопируйте файлы в папку travelsoft.pm в корне сайта или клонируйте репозиторий в корень сайта
 ```
-mkdir travelsoft.pm
-cd travelsoft.pm
 clone https://github.com/dimabresky/travelsoft.pm.git
 ```
 
