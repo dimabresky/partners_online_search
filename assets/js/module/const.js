@@ -11,12 +11,18 @@
 (function (Travelsoft) {
 
     "use strict";
-
+    
     /**
      * Адрес сайта запросов модуля
      * @type String
      */
     Travelsoft.SITE_ADDRESS = "https://vetliva.ru";
+    
+    /**
+     * Адресс видео хостинга
+     * @type String
+     */
+    Travelsoft.VIDEO_URL = "https://www.youtube.com/embed/";
 
     /**
      * Адрес запроса модуля

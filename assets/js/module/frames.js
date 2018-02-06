@@ -272,6 +272,7 @@
                             '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">'
                         ].join("") + [
 
+                            Travelsoft.CSS_URL + "/owl.carousel.min.css",
                             Travelsoft.CSS_URL + "/search-result/styles.min.css"
 
                         ].map(function (href) {
@@ -284,6 +285,11 @@
 
                         return [
 
+                            "https://api-maps.yandex.ru/2.1/?lang=ru_RU",
+                            Travelsoft.JS_URL + "/jquery-3.2.1.min.js",
+                            Travelsoft.JS_URL + "/bootstrap.min.js",
+                            Travelsoft.JS_URL + "/owl.carousel.min.js",
+                            Travelsoft.JS_URL + "/pagenavigator.min.js",
                             Travelsoft.JS_URL + "/bundles/search_result.js"
                         ].map(function (src) {
                             return `<script type="text/javascript" src="${src}"></script>`;

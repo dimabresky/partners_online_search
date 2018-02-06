@@ -8,16 +8,16 @@ namespace travesoft\pm;
  * @author dimabresky
  * @copyright (c) 2017,  travelsoft
  */
+
 class API implements interfaces\API {
 
     const DATE_SEPARATOR = "-";
-    
+
     /**
      * "Соль" обязательно генерировать для каждого проекта
      * @var string
      */
     protected static $salt = "0ce42c55e079e52567257eec146a2583";
-    
     protected $_allowedDirTarget = array(
         "redirect",
         "code_generator"
@@ -28,6 +28,10 @@ class API implements interfaces\API {
         require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
         \Bitrix\Main\Loader::includeModule("travelsoft.booking.dev.tools");
         \Bitrix\Main\Loader::includeModule("iblock");
+        if (!defined("POSTFIX_PROPERTY")) {
+            define("POSTFIX_PROPERTY", LANGUAGE_ID === "ru" ? "" : "_" . strtoupper(LANGUAGE_ID));
+        }
+        
     }
 
     /**
@@ -131,6 +135,112 @@ class API implements interfaces\API {
         return $result;
     }
 
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    public function getDetailDescriptionRenderData(array $parameters): array {
+
+        $id = -1;
+        if (!empty($parameters["id"])) {
+            $id = intVal($parameters["id"][0]);
+        }
+
+        $method = "get" . ucfirst($parameters["type"]) . "DetailDescriptionRenderData";
+
+        $result = array();
+        if (method_exists($this, $method)) {
+            $result = $this->$method($id);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    public function getDetailMapRenderData(array $parameters) : array {
+
+        $id = -1;
+        if (!empty($parameters["id"])) {
+            $id = intVal($parameters["id"][0]);
+        }
+
+        $element = \CIBlockElement::GetByID($id)->GetNextElement();
+
+        $arFields = $element->GetFields();
+        $arProperties = $element->GetProperties();
+
+        if ($arFields["ID"] > 0) {
+
+            if ($arProperties["TOWN"]["VALUE"] && $arProperties["TOWN"]["MULTIPLE"] === "Y") {
+                $arDepCity = \CIBlockElement::GetList(Array("SORT" => "ASC"), Array("IBLOCK_ID" => $arProperties["CITY"]["LINK_IBLOCK_ID"], "ID" => $arProperties["CITY"]["VALUE"], "ACTIVE" => "Y"), false, false, Array("ID", "NAME", "PROPERTY_NAME" . POSTFIX_PROPERTY, "PROPERTY_MAP"))->Fetch();
+                $LATLNG = explode(",", $arDepCity["PROPERTY_MAP_VALUE"]);
+                $result[] = array(
+                            "title" => LANGUAGE_ID !== "ru" ? $arDepCity['PROPERTY_NAME' . POSTFIX_PROPERTY . "_VALUE"] : $arCities['NAME'],
+                            "lat" => $LATLNG[0],
+                            "lng" => $LATLNG[1],
+                            "icon" => "/local/templates/travelsoft/images/icon-maker.png",
+                            "content" => "<div><b>" . ( LANGUAGE_ID !== "ru" ? $arDepCity['PROPERTY_NAME' . POSTFIX_PROPERTY . "_VALUE"] : $arDepCity['NAME'] ) . "</b></div>"
+                        );
+                
+                $arCities = array();
+                $db_cities = \CIBlockElement::GetList(Array("SORT" => "ASC"), Array("IBLOCK_ID" => $arProperties["TOWN"]["LINK_IBLOCK_ID"], "ID" => $arProperties["TOWN"]["VALUE"], "ACTIVE" => "Y"), false, false, Array("ID", "NAME", "PROPERTY_NAME" . POSTFIX_PROPERTY, "PROPERTY_MAP"));
+                while ($ar_fields = $db_cities->GetNext()) {
+                    $arCities[$ar_fields["ID"]] = $ar_fields;
+                }
+                
+                foreach ($arProperties["TOWN"]["VALUE"] as $town_id) {
+
+                    if ($arCities[$town_id]["PROPERTY_MAP_VALUE"] != "") {
+                        $LATLNG = explode(",", $arCities[$town_id]["PROPERTY_MAP_VALUE"]);
+                        $result[] = array(
+                            "title" => LANGUAGE_ID !== "ru" ? $arCities[$town_id]['PROPERTY_NAME' . POSTFIX_PROPERTY . "_VALUE"] : $arCities[$town_id]['NAME'],
+                            "lat" => $LATLNG[0],
+                            "lng" => $LATLNG[1],
+                            "icon" => "/local/templates/travelsoft/images/icon-maker.png",
+                            "content" => "<div><b>" . ( LANGUAGE_ID !== "ru" ? $arCities[$town_id]['PROPERTY_NAME' . POSTFIX_PROPERTY . "_VALUE"] : $arCities[$town_id]['NAME'] ) . "</b></div>"
+                        );
+                    }
+                }
+            } elseif ($arProperties["MAP"]["VALUE"] != "") {
+                $LATLNG = explode(",", $arProperties["MAP"]["VALUE"]);
+                $result[] = array(
+                    "title" => LANGUAGE_ID !== "ru" ? $arFields['NAME' . POSTFIX_PROPERTY] : $arFields['NAME'],
+                    "lat" => $LATLNG[0],
+                    "lng" => $LATLNG[1],
+                    "icon" => "/local/templates/travelsoft/images/icon-maker.png",
+                    "content" => "<div><b>" . ( LANGUAGE_ID !== "ru" ? $arFields['NAME' . POSTFIX_PROPERTY] : $arFields['NAME'] ) . "</b></div>"
+                );
+            }
+        }
+
+        return $result;
+    }
+    
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    public function getDetailVideoRenderData (array $parameters) : array {
+        
+        $id = -1;
+        if (!empty($parameters["id"])) {
+            $id = intVal($parameters["id"][0]);
+        }
+
+        $element = \CIBlockElement::GetByID($id)->GetNextElement();
+
+        $arFields = $element->GetFields();
+        $arProperties = $element->GetProperties();
+        $result = array("code" => null);
+        if ($arFields["ID"] > 0 && $arProperties["YOUTUBE" . POSTFIX_PROPERTY]["VALUE"]) {
+            $result["code"] = $arProperties["YOUTUBE" . POSTFIX_PROPERTY]["VALUE"];
+        }
+        return $result;
+    }
+    
     /**
      * Получение данных для отображения результатов поиска
      * @param array $parameters
@@ -330,7 +440,7 @@ class API implements interfaces\API {
         header("HTTP/1.0 404 Not Found");
         die;
     }
-    
+
     /**
      * @param array $parameters
      */
@@ -543,6 +653,13 @@ class API implements interfaces\API {
                         $imgSrc = $resize['src'];
                     }
 
+                    $countryName = "";
+                    if ($arProperties["COUNTRY"]["VALUE"] > 0) {
+                        $arCountry = \CIBlockElement::GetByID($arProperties["COUNTRY"]["VALUE"])->Fetch();
+                        if ($arCountry["NAME"]) {
+                            $countryName = $arCountry["NAME"];
+                        }
+                    }
 
                     $result["items"][] = array(
                         "id" => $arFields["ID"],
@@ -550,13 +667,15 @@ class API implements interfaces\API {
                         "stars" => $starsMapping[$arProperties["CAT_ID"]["VALUE"]],
                         "imgSrc" => $imgSrc,
                         "text" => array(
-                            "address" => $arProperties["ADDRESS"]["VALUE"] ? $arRes["ADDRESS"]["VALUE"] : null,
+                            "features" => $arProperties["FEATURES"]["VALUE"] ? $arProperties["FEATURES"]["VALUE"] : null,
+                            "address" => $arProperties["ADDRESS"]["VALUE"] ? $arProperties["ADDRESS"]["VALUE"] . ", " . $countryName : null,
                             "route" => $arProperties["ROUTE"]["VALUE"] ? $arProperties["ROUTE"]["VALUE"] : null,
-                            "days" => $arProperties["DAYS"]["VALUE"] ? "Количество дней: " . $arProperties["DAYS"]["VALUE"] : null,
-                            "duration_time" => $arProperties["DURATION_TIME"]["VALUE"] ? "Количество часов: " . $arProperties["DURATION_TIME"]["VALUE"] : null,
+                            "days" => $arProperties["DAYS"]["VALUE"] ? $arProperties["DAYS"]["VALUE"] : null,
+                            "duration_time" => $arProperties["DURATION_TIME"]["VALUE"] ? $arProperties["DURATION_TIME"]["VALUE"] : null,
                             "distance" => array(
-                                "center" => $arProperties["DISTANCE_CENTER"]["VALUE"] ? "Расстояние до центра " . $arProperties["DISTANCE_CENTER"]["VALUE"] . " км" : null,
-                                "airport" => $arProperties["DISTANCE_AIRPORT"]["VALUE"] ? "Pасстояние до аэропорта " . $arProperties["DISTANCE_AIRPORT"]["VALUE"] . " км" : null
+                                "center" => $arProperties["DISTANCE_CENTER"]["VALUE"] ? $arProperties["DISTANCE_CENTER"]["VALUE"] : null,
+                                "airport" => $arProperties["DISTANCE_AIRPORT"]["VALUE"] ? $arProperties["DISTANCE_AIRPORT"]["VALUE"] : null,
+                                "minsk" => $arProperties["DISTANCE_MINSK"]["VALUE"] ? $arProperties["DISTANCE_MINSK"]["VALUE"] : null
                             ),
                             "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode("BYN")) . "/ночь"
                         ),
@@ -903,6 +1022,195 @@ class API implements interfaces\API {
         $arFields = $oEL->GetFields();
         $arProperties = $oEL->GetProperties();
         return $this->getName($arFields["NAME"], $arProperties["NAME" . POSTFIX_PROPERTY]["VALUE"]);
+    }
+    
+    /**
+     * @return array
+     */
+    protected function getDefaultDetailDescriptionRenderData () {
+        return array(
+            "pictures" => null,
+            "desc" => null,
+            "program" => null,
+            "profiles" => null,
+            "services" => null,
+            "medicine_services" => null,
+            "children_services" => null,
+            "rooms_base" => null,
+            "food" => null,
+            "addinfo" => null
+        );
+    }
+    
+    protected function getExcursionsDetailDescriptionRenderData(int $id) {
+        $result = $this->getDefaultDetailDescriptionRenderData();
+
+        $element = \CIBlockElement::GetByID($id)->GetNextElement();
+        $arFields = $element->GetFields();
+        $arProperties = $element->GetProperties();
+        if ($arFields["ID"] > 0) {
+
+            if (!empty($arProperties["PICTURES"]["VALUE"])) {
+
+                unset($arProperties["PICTURES"]["VALUE"][0]);
+                $result["pictures"] = $this->getResizedPictures((array) $arProperties["PICTURES"]["VALUE"]);
+            }
+            
+            if (!empty($arProperties["NDAYS" . POSTFIX_PROPERTY]["VALUE"])) {
+                foreach ($arProperties["NDAYS" . POSTFIX_PROPERTY]["~VALUE"] as $arValue) {
+                    $result["program"] .= $arValue["TEXT"];
+                }
+                
+            }
+            
+            if (!empty($arProperties["ADDITIONAL" . POSTFIX_PROPERTY]["VALUE"])) {
+                $result["addinfo"] = $arProperties["ADDITIONAL" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+        }
+        
+        return $result;
+    }
+    
+    protected function getPlacementsDetailDescriptionRenderData(int $id) {
+        return $this->getSanatoriumDetailDescriptionRenderData($id);
+    }
+
+    protected function getSanatoriumDetailDescriptionRenderData(int $id) {
+
+        $result = $result = $this->getDefaultDetailDescriptionRenderData();
+
+        $element = \CIBlockElement::GetByID($id)->GetNextElement();
+        $arFields = $element->GetFields();
+        $arProperties = $element->GetProperties();
+        if ($arFields["ID"] > 0) {
+
+            if (!empty($arProperties["PICTURES"]["VALUE"])) {
+
+                unset($arProperties["PICTURES"]["VALUE"][0]);
+                $result["pictures"] = $this->getResizedPictures((array) $arProperties["PICTURES"]["VALUE"]);
+            }
+
+            if (!empty($arProperties["HD_DESC" . POSTFIX_PROPERTY]["VALUE"])) {
+
+                $result["desc"] = $arProperties["HD_DESC" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+
+            if (!empty($arProperties["TYPE"]["VALUE"])) {
+                $this->setServicesGroup($arProperties, "TYPE", $result["profiles"]);
+            }
+
+            if (!empty($arProperties["SERVICES"]["VALUE"])) {
+                $this->setServicesGroup($arProperties, "SERVICES", $result["services"]);
+            }
+
+            if (!empty($arProperties["MED_SERVICES"]["VALUE"])) {
+                $this->setServicesGroup($arProperties, "MED_SERVICES", $result["medicine_services"]);
+            }
+
+            if (!empty($arProperties["HD_DESCCHILD" . POSTFIX_PROPERTY]["VALUE"])) {
+                $result["children_services"] = $arProperties["HD_DESCCHILD_" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+
+            if (!empty($arProperties["HD_DESCROOM" . POSTFIX_PROPERTY]["VALUE"])) {
+                $result["rooms_base"] = $arProperties["HD_DESCROOM" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+
+            if (!empty($arProperties["HD_DESCMEAL" . POSTFIX_PROPERTY]["VALUE"])) {
+                $result["food"] = $arProperties["HD_DESCMEAL" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+
+            if (!empty($arProperties["HD_ADDINFORMATION" . POSTFIX_PROPERTY]["VALUE"])) {
+                $result["addinfo"] = $arProperties["HD_ADDINFORMATION" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $pics_ids
+     * @return array
+     */
+    protected function getResizedPictures(array $pics_ids) {
+        $result = array("big" => null, "small" => null);
+        $arWaterMark = Array(
+            array(
+                "name" => "watermark",
+                "position" => "topright", // Положение
+                "type" => "image",
+                "size" => "real",
+                "file" => NO_PHOTO_PATH_WATERMARK, // Путь к картинке
+                "fill" => "exact",
+            )
+        );
+        foreach ($pics_ids as $id) {
+            $result["big"][] = \CFile::ResizeImageGet($id, Array('width' => 1170, 'height' => 440), BX_RESIZE_IMAGE_EXACT, true, $arWaterMark)["src"];
+            $result["small"][] = \CFile::ResizeImageGet($id, Array('width' => 90, 'height' => 60), BX_RESIZE_IMAGE_EXACT, true, $arWaterMark)["src"];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $data
+     * @param string $property_code
+     * @param array $res
+     */
+    protected function setServicesGroup($data, $property_code, &$res) {
+
+        $arServicesId = array();
+        $iblockId = $data[$property_code]["LINK_IBLOCK_ID"];
+        if (!empty($data[$property_code]["VALUE"])) {
+            $arServicesId = $data[$property_code]["VALUE"];
+        }
+
+        if (!empty($data[$property_code . "_PAID"]["VALUE"])) {
+            $arServicesId = array_merge($arServicesId, $data[$property_code][$property_code . "_PAID"]["VALUE"]);
+        }
+
+        if (!empty($arServicesId)) {
+
+            $arSelect = Array("ID", "PROPERTY_SERVICE_ICON", "IBLOCK_SECTION_ID");
+
+            if (LANGUAGE_ID != "ru") {
+                $arSelect[] = "PROPERTY_NAME" . POSTFIX_PROPERTY;
+            } else {
+                $arSelect[] = "NAME";
+            }
+
+            $dbResElement = \CIBlockElement::GetList(array("sort" => "asc"), Array("IBLOCK_ID" => $iblockId, "ID" => $arServicesId, "ACTIVE" => "Y"), false, false, $arSelect);
+
+            $res[$property_code . "_GROUP"] = NULL;
+            while ($arRes = $dbResElement->Fetch()) {
+                
+                    $res[$property_code . "_GROUP"][(int)$arRes["IBLOCK_SECTION_ID"]][$arRes["ID"]] = array(
+                        "TITLE" => LANGUAGE_ID != "ru" ? $arRes["PROPERTY_NAME" . POSTFIX_PROPERTY . "_VALUE"] : $arRes["NAME"],
+                        "PAID" => in_array($arRes["ID"], $data[$property_code . "_PAID"]["VALUE"])
+                    );
+                    
+            }
+
+            if ($res[$property_code . "_GROUP"]) {
+
+                $res[$property_code . "_SECTIONS"] = NULL;
+
+                $arSelect = array("ID", "PICTURE");
+
+                if (LANGUAGE_ID != "ru") {
+                    $arSelect[] = "UF_NAME" . POSTFIX_PROPERTY;
+                } else {
+                    $arSelect[] = "NAME";
+                }
+
+                $dbResSection = \CIBlockSection::GetList(array("sort" => "asc"), array("IBLOCK_ID" => $iblockId, "ID" => array_keys($res[$property_code . "_GROUP"])), false, $arSelect);
+                while ($arRes = $dbResSection->Fetch()) {
+                    $res[$property_code . "_SECTIONS"][$arRes["ID"]]["TITLE"] = LANGUAGE_ID != "ru" ? $arRes["UF_NAME" . POSTFIX_PROPERTY] : $arRes["NAME"];
+                    if ($arRes["PICTURE"]) {
+                        $res[$property_code . "_SECTIONS"][$arRes["ID"]]["PICTURE"] = \CFile::GetFileArray($arRes["PICTURE"]);
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -22,7 +22,21 @@
          * @type Object
          */
         callbacks: {},
+        
+        /**
+         * Генератор уникальноый строки
+         * @returns {String}
+         */
+        makeid: function () {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+            for (var i = 0; i < 5; i++)
+              text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+          },
+        
         /**
          * Отправление заропса jsonp
          * @param {String} method - название метода, который будет вызван на сервере 

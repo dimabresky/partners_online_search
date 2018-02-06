@@ -125,6 +125,60 @@ interface API {
     public function getOffersRenderData (array $parameters): array;
     
     /**
+     * Получение данных для отображения детального описания
+     * @param array $parameters
+     * @return array [
+     *      "pictures" => [
+     *          "big" => [], массив путей к большим картинкам
+     *          "small" => [] массив путей к картинкам навигации
+     *      ],
+     *      "desc" => текст описания,
+     *      "program" => программа тура (для экск. туров),
+     *      "profiles" => [медицинские профили
+     *          "TYPE_GROUP" => [], // структуру смотреть в реализации API в ветке vetliva на github
+     *          "TYPE_SECTIONS" => [] // структуру смотреть в реализации API в ветке vetliva на github
+     *      ],
+     *      "services" => [ услуги
+     *          "SERVICES_GROUP" => [], // структуру смотреть в реализации API в ветке vetliva на github
+     *          "SERVICES_SECTIONS" => [] // структуру смотреть в реализации API в ветке vetliva на github
+     *      ],
+     *      "medicine_services" => [медицинские услуги
+     *          "MED_SERVICES_GROUP" => [], // структуру смотреть в реализации API в ветке vetliva на github
+     *          "MED_SERVICES_SECTIONS" => [] // структуру смотреть в реализации API в ветке vetliva на github
+     *      ],
+     *      "children_services" => текст услуги для детей,
+     *      "rooms_base" => текст номерная база,
+     *      "food" => текст питания,
+     *      "addinfo" => текст доп. информации
+     * ]
+     */
+    public function getDetailDescriptionRenderData (array $parameters): array;
+    
+    /**
+     * Получение данных для отображения детального описания
+     * @param array $parameters
+     * @return array [
+     *      [
+     *          title => заголовок маркера,
+     *          lat => долгота,
+     *          lng => широта,
+     *          icon => относительный путь к изображению маркера(необязательный),
+     *          content => text/html описания маркера(необязательный)
+     *      ]
+     * ]
+     */
+    public function getDetailMapRenderData (array $parameters): array;
+    
+    /**
+     * Получение данных для отображения видео
+     * @param array $parameters
+     * @return array [
+     *      "code" => код видео youtube
+     * ]
+     */
+    public function getDetailVideoRenderData (array $parameters) : array;
+    
+    /**
      * Выполняет процедуру бронирования
      * @param array $parameters
      */
