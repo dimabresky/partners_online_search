@@ -743,7 +743,7 @@
 
                     __chevronUp($this);
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Загрузка информации..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
 
                     // get offers
                     Travelsoft.utils.sendRequest("GetOffersRenderData", [$this.data("offers-request").join("&")], (function ($parent) {
@@ -795,7 +795,7 @@
                     });
 
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Загрузка информации..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
 
                     // get detail description
                     Travelsoft.utils.sendRequest("GetDetailDescriptionRenderData", [$this.data("request").join("&")], (function ($parent) {
@@ -846,7 +846,7 @@
                                 __chevronDownAll();
                             });
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Загрузка информации..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
                     
                     // get detail description
                     Travelsoft.utils.sendRequest("GetDetailMapRenderData", [$this.data("request").join("&")], (function ($parent) {
@@ -897,7 +897,7 @@
                                 __chevronDownAll();
                             });
                     __insertSpiner($this);
-                    __renderInfoBlock({message: "Загрузка информации..."}, $parent);
+                    __renderInfoBlock({message: "Идет загрузка информации. Пожалуйста, подождите..."}, $parent);
                     
                     // get video
                     Travelsoft.utils.sendRequest("GetDetailVideoRenderData", [$this.data("request").join("&")], (function ($parent) {
