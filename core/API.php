@@ -677,7 +677,7 @@ class API implements interfaces\API {
                                 "airport" => $arProperties["DISTANCE_AIRPORT"]["VALUE"] ? $arProperties["DISTANCE_AIRPORT"]["VALUE"] : null,
                                 "minsk" => $arProperties["DISTANCE_MINSK"]["VALUE"] ? $arProperties["DISTANCE_MINSK"]["VALUE"] : null
                             ),
-                            "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode("BYN")) . "/ночь"
+                            "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode("BYN"))
                         ),
                         "request" => array_merge(array(
                             "tpm_params[id][]=" . $arFields["ID"],
