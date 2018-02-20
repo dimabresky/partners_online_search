@@ -81,6 +81,8 @@ var Travelsoft = Travelsoft || {};
             
             var number_per_page = 10;
             
+            var rand = Math.ceil(Math.random()*1000);
+            
             if (render_type === "forms") {
                 
                 els = document.querySelectorAll("input[name='tabs']:checked");
@@ -103,11 +105,12 @@ var Travelsoft = Travelsoft || {};
                     }
                     
                     document.getElementById("code-area").value = `
-                        <div id="search-forms-iframe-block"><span>Идет загрузка формы поиска...</span></div>
+                        <div id="search-forms-iframe-block-${rand}"><span>Идет загрузка формы поиска...</span></div>
                         <script src="https://vetliva.ru/travelsoft.pm/assets/js/bundles/init.js"></script>
                         <script>
                             Travelsoft.init({
                                     forms: {
+                                        insertion_id: "search-forms-iframe-block-${rand}",
                                         types: [${tabs.join(",")}],
                                         active: ${active_tab},
                                         url: [${urls.join(",")}],
@@ -137,11 +140,12 @@ var Travelsoft = Travelsoft || {};
                     number_per_page = document.querySelector(`select[name='${search_result_object}_number_per_page']`).value;
                     
                     document.getElementById("code-area").value = `
-                    <div id="search-result-iframe-block"><span>Идет загрузка результатов поиска...</span></div>
+                    <div id="search-result-iframe-block-${rand}"><span>Идет загрузка результатов поиска...</span></div>
                     <script src="https://vetliva.ru/travelsoft.pm/assets/js/bundles/init.js"></script>
                     <script>
                         Travelsoft.init({
                             searchResult: {
+                                insertion_id: "search-result-iframe-block-${rand}",
                                 type: "${search_result_object}",
                                 numberPerPage: ${number_per_page},
                                 agent: "${document.querySelector("input[name='agent']").value}",

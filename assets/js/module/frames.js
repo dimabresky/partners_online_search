@@ -161,8 +161,8 @@
                         })()
                     });
 
-                    document.getElementById("search-forms-iframe-block").replaceChild(
-                            iframe, document.getElementById("search-forms-iframe-block").querySelector("span"));
+                    document.getElementById(options.insertion_id).replaceChild(
+                            iframe, document.getElementById(options.insertion_id).querySelector("span"));
 
                     return iframe;
                 },
@@ -298,8 +298,8 @@
                     })()
                 });
 
-                document.getElementById("search-result-iframe-block").replaceChild(
-                        iframe, document.getElementById("search-result-iframe-block").querySelector("span"));
+                document.getElementById(options.insertion_id).replaceChild(
+                        iframe, document.getElementById(options.insertion_id).querySelector("span"));
 
                 return iframe;
 
