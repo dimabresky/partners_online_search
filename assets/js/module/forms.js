@@ -12,7 +12,9 @@
 (function (Travelsoft, $) {
 
     "use strict";
-
+    
+    
+    
     function __hideAllFrames() {
 
         var frames = parent.document.querySelectorAll(".iframe-plugin");
@@ -50,14 +52,13 @@
         var tabArea = $(tab.attr("href"));
 
         // create select
-        __initSelectPlugin(tabArea, options.selectIframeCss);
+        __initSelectPlugin(tabArea, options.selectIframeCss, options.parent_iframe_id);
 
         // create datepicker
-        __createDatepicker(tabArea, options.datepickerIframeCss);
-
+        __createDatepicker(tabArea, options.datepickerIframeCss, options.parent_iframe_id);
 
         // create children iframe
-        __initChildrenPlugin(tabArea, options.childrenIframeCss);
+        __initChildrenPlugin(tabArea, options.childrenIframeCss, options.parent_iframe_id);
 
         // go to search page
         tabArea.find("form").find("button").each(function () {
@@ -78,9 +79,10 @@
      * @param {String} defValue
      * @param {String} pluginName
      * @param {String} css
+     * @param {String} parentIframeId
      * @returns {Object}
      */
-    function __commonPluginInit(self, data, scrolling, defValue, pluginName, css) {
+    function __commonPluginInit(self, data, scrolling, defValue, pluginName, css, parentIframeId) {
         var iframe_id = "iframe-plugin-" + self.id;
 
         var span = __initPluginSpan(self.id, defValue, iframe_id);
@@ -90,7 +92,8 @@
             self: self,
             data: data,
             scrolling: scrolling,
-            css: css
+            css: css,
+            parentIframeId: parentIframeId
         }));
 
         self.style.display = "none";
@@ -106,9 +109,10 @@
      * @param {String} pluginName
      * @param {Boolean} scrolling
      * @param {String} css
+     * @param {String} parentIframeId
      * @returns {Object}
      */
-    function __initPlugin(self, pluginName, scrolling, css) {
+    function __initPlugin(self, pluginName, scrolling, css, parentIframeId) {
 
         var data = (function (select) {
             var data = [];
@@ -136,7 +140,7 @@
 
         })(self);
 
-        return __commonPluginInit(self, data, scrolling, defValue, pluginName, css);
+        return __commonPluginInit(self, data, scrolling, defValue, pluginName, css, parentIframeId);
     }
 
     /**
@@ -166,10 +170,11 @@
      * @returns {Obejct}
      */
     function __commonIframeOptions(options) {
+        
         return {
             iframe_id: options.iframe_id,
-            top: $(options.self).offset().top + $(parent.document.getElementById("search-forms")).offset().top + 31,
-            left: $(options.self).offset().left + $(parent.document.getElementById("search-forms")).offset().left,
+            top: $(options.self).offset().top + $(parent.document.getElementById(options.parentIframeId)).offset().top + 31,
+            left: $(options.self).offset().left + $(parent.document.getElementById(options.parentIframeId)).offset().left,
             width: $(options.self).outerWidth(),
             without: options.self.dataset.without === "yes",
             height: options.self.dataset.iframeSelectHeight ? options.self.dataset.iframeSelectHeight : 500,
@@ -184,15 +189,16 @@
      * Инициализация plugin select (like autocomplete or select2)
      * @param {$} tab
      * @param {String} css
+     * @param {String} parentIframeId
      * @returns {Array}
      */
-    function __initSelectPlugin(tab, css) {
+    function __initSelectPlugin(tab, css, parentIframeId) {
 
         var plugins = [];
 
         tab.find('select[data-need-create-iframe-select=yes]').each(function () {
 
-            var self = this, old, pluginParts = __initPlugin(self, "select", true, css);
+            var self = this, old, pluginParts = __initPlugin(self, "select", true, css, parentIframeId);
 
             // watch for frame dataset
             setInterval(function () {
@@ -229,15 +235,16 @@
      * Инициализация plugin children
      * @param {$} tab
      * @param {Object} css
+     * @param {String} parentIframeId
      * @returns {Array}
      */
-    function __initChildrenPlugin(tab, css) {
+    function __initChildrenPlugin(tab, css, parentIframeId) {
 
         var plugins = [];
 
         tab.find('select[data-need-create-iframe-children=yes]').each(function () {
 
-            var self = this, pluginParts = __initPlugin(self, "children", false, css);
+            var self = this, pluginParts = __initPlugin(self, "children", false, css, parentIframeId);
 
             var span = document.createElement("span");
 
@@ -290,9 +297,10 @@
      * Инициализация работы календаря в форме поиска
      * @param {$} tab
      * @param {Object} css
+     * @param {String} parentIframeId
      * @returns {undefined}
      */
-    function __createDatepicker(tab, css) {
+    function __createDatepicker(tab, css, parentIframeId) {
 
         var plugins = [];
 
@@ -304,7 +312,7 @@
                 format: $(self).data("format"),
                 date_separator: $(self).data("date-separator"),
                 defValue: self.value || null
-            }, false, self.value || null, "datepicker", css);
+            }, false, self.value || null, "datepicker", css, parentIframeId);
 
             var old;
 
@@ -428,8 +436,7 @@
                                                 </div>
                                             </div>
                                         </div>`;
-        Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById("search-forms");
-        Travelsoft.utils.HWatcher.watch(document.body);
+        
     }
 
     Travelsoft.forms = {
@@ -474,8 +481,10 @@
                                                 }
                                                 return __data;
                                             })(resp.data, options)
-                                            );
+                            );
 
+                            Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById(options.parent_iframe_id);
+                            Travelsoft.utils.HWatcher.watch(document.body);
 
                             setTimeout(function () {
                                 // init all tabs

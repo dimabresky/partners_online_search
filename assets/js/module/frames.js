@@ -116,7 +116,9 @@
                  * @returns {Element}
                  */
                 form: function (options) {
-
+                    
+                    var iframe_id = "search-forms-" + Math.ceil(Math.random()*1000);
+                    
                     var iframe = __createFrame({
                         styles: {
                             width: "100%",
@@ -124,7 +126,7 @@
                         },
                         attributes: {
                             src: "about:blank",
-                            id: "search-forms",
+                            id: iframe_id,
                             scrolling: "yes"
                         },
                         iframeContent: ``,
@@ -147,7 +149,7 @@
 
                         iframeScripts: (function () {
 
-                            options.parent_iframe_id = "search-forms";
+                            options.parent_iframe_id = iframe_id;
 
                             return [
 
