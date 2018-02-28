@@ -16,7 +16,12 @@
     "use strict";
 
     var __cache = {};
-
+    
+    function __scrollto ($element, $parentBlock, delta) {
+        delta = delta || 0;
+        $(parent.document).find("html").animate({scrollTop: $element.offset().top + $parentBlock.offset().top - delta}, 500);
+    }
+    
     function __initSlider($parent) {
 
         var slidelager = $parent.find(".slide-room-lg");
@@ -135,7 +140,7 @@
         return `<div class="panel panel-default">
                         <div class="panel-heading">
                           <h4 class="panel-title">
-                                  <a data-toggle="collapse" data-parent="#${accordion_id}" href="#collapse-${collapse_id}">
+                                  <a class="panel-collapser" data-toggle="collapse" data-parent="#${accordion_id}" href="#collapse-${collapse_id}">
                                     ${title}
                                   </a>
                             </h4>
@@ -587,7 +592,6 @@
                     var html = `<div class="featured-service">`;
                     for (var section_id in services.MED_SERVICES_GROUP) {
                         html += `<div class="list-service-section">
-                                                                            ${services.MED_SERVICES_SECTIONS[section_id].PICTURE.SRC ? `<div class="icon-service" style="float:left; top:2px"><img src="${Travelsoft.SITE_ADDRESS + services.MED_SERVICES_SECTIONS[section_id].PICTURE.SRC}"></div>` : ``}
                                                                             <h4>${services.MED_SERVICES_SECTIONS[section_id].TITLE}</h4>
                                                                         </div>
                                                                         <ul class="service-accmd">
@@ -602,7 +606,7 @@
                     }
                     html += "</div>";
                     return html;
-                })(data.services), accordion_id, collapseIn);
+                })(data.medecine_services), accordion_id, collapseIn);
                 collapseIn = "";
             }
 
@@ -632,8 +636,6 @@
                 </div>
             </div>
         `);
-
-        
 
         $parent.find(".detail-desc-block").removeClass("hidden");
 
@@ -713,7 +715,7 @@
          * @returns {undefined}
          */
         init: function (options) {
-
+            
             var opt = options;
 
             __renderPage(opt);
@@ -968,6 +970,13 @@
                 }
 
             });
+            
+            /**
+             * Прокрутка страницы к схлопывающимся панелям
+             */
+            $(document).on("click", ".panel-collapser", function () {
+                __scrollto($(this), $(parent.document).find("#" + options.insertion_id), 100);
+            })
 
         }
     };

@@ -1034,7 +1034,7 @@ class API implements interfaces\API {
             "program" => null,
             "profiles" => null,
             "services" => null,
-            "medicine_services" => null,
+            "medecine_services" => null,
             "children_services" => null,
             "rooms_base" => null,
             "food" => null,
@@ -1077,7 +1077,7 @@ class API implements interfaces\API {
 
     protected function getSanatoriumDetailDescriptionRenderData(int $id) {
 
-        $result = $result = $this->getDefaultDetailDescriptionRenderData();
+        $result = $this->getDefaultDetailDescriptionRenderData();
 
         $element = \CIBlockElement::GetByID($id)->GetNextElement();
         $arFields = $element->GetFields();
@@ -1092,7 +1092,8 @@ class API implements interfaces\API {
 
             if (!empty($arProperties["HD_DESC" . POSTFIX_PROPERTY]["VALUE"])) {
 
-                $result["desc"] = $arProperties["HD_DESC" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+                $result["desc"] = preg_replace('~<a\b[^>]*+>|</a\b[^>]*+>~', '', $arProperties["HD_DESC" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"]);
+
             }
 
             if (!empty($arProperties["TYPE"]["VALUE"])) {
@@ -1104,23 +1105,23 @@ class API implements interfaces\API {
             }
 
             if (!empty($arProperties["MED_SERVICES"]["VALUE"])) {
-                $this->setServicesGroup($arProperties, "MED_SERVICES", $result["medicine_services"]);
+                $this->setServicesGroup($arProperties, "MED_SERVICES", $result["medecine_services"]);
             }
 
             if (!empty($arProperties["HD_DESCCHILD" . POSTFIX_PROPERTY]["VALUE"])) {
-                $result["children_services"] = $arProperties["HD_DESCCHILD_" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+                $result["children_services"] = preg_replace('~<a\b[^>]*+>|</a\b[^>]*+>~', '', $arProperties["HD_DESCCHILD_" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"]);
             }
 
             if (!empty($arProperties["HD_DESCROOM" . POSTFIX_PROPERTY]["VALUE"])) {
-                $result["rooms_base"] = $arProperties["HD_DESCROOM" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+                $result["rooms_base"] = preg_replace('~<a\b[^>]*+>|</a\b[^>]*+>~', '', $arProperties["HD_DESCROOM" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"]);
             }
 
             if (!empty($arProperties["HD_DESCMEAL" . POSTFIX_PROPERTY]["VALUE"])) {
-                $result["food"] = $arProperties["HD_DESCMEAL" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+                $result["food"] = preg_replace('~<a\b[^>]*+>|</a\b[^>]*+>~', '', $arProperties["HD_DESCMEAL" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"]);
             }
 
             if (!empty($arProperties["HD_ADDINFORMATION" . POSTFIX_PROPERTY]["VALUE"])) {
-                $result["addinfo"] = $arProperties["HD_ADDINFORMATION" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"];
+                $result["addinfo"] = preg_replace('~<a\b[^>]*+>|</a\b[^>]*+>~', '', $arProperties["HD_ADDINFORMATION" . POSTFIX_PROPERTY]["~VALUE"]["TEXT"]);
             }
         }
 
