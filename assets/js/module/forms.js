@@ -12,9 +12,9 @@
 (function (Travelsoft, $) {
 
     "use strict";
-    
-    
-    
+
+
+
     function __hideAllFrames() {
 
         var frames = parent.document.querySelectorAll(".iframe-plugin");
@@ -156,7 +156,10 @@
         span.innerText = defValue;
         span.style.cursor = "pointer";
         span.style.overflow = "hidden";
+        span.style["white-space"] = "nowrap";
+        span.style["text-overflow"] = "ellipsis";
         span.style.display = "inline-block";
+        span.style["padding-right"] = "22px";
         span.style["line-height"] = "22px";
         if (iframeLink) {
             span.dataset.iframeLink = iframeLink;
@@ -170,7 +173,6 @@
      * @returns {Obejct}
      */
     function __commonIframeOptions(options) {
-        
         return {
             iframe_id: options.iframe_id,
             top: $(options.self).offset().top + $(parent.document.getElementById(options.parentIframeId)).offset().top + 31,
@@ -199,7 +201,6 @@
         tab.find('select[data-need-create-iframe-select=yes]').each(function () {
 
             var self = this, old, pluginParts = __initPlugin(self, "select", true, css, parentIframeId);
-
             // watch for frame dataset
             setInterval(function () {
 
@@ -369,7 +370,7 @@
 
                 html += `<div class="tab-pane ${data[key].tabIsActive ? 'active' : ''}" id="${key_}-form-area">
                                                                                     <form id="${key}-form">
-                                                                                        <div class="col-md-3 col-sm-6">
+                                                                                        <div class="col-md-3 col-sm-6 col-xs-6">
                                                                                             <div class="form-group">
                                                                                                 <label>
                                                                                                     ${__screen(data[key].objects.title)}
@@ -386,7 +387,7 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-3 col-sm-6">
+                                                                <div class="col-md-3 col-sm-6 col-xs-6">
                                                                     <div class="form-group">
                                                                         <label>
                                                                             ${__screen(data[key].dates.title)}
@@ -394,12 +395,12 @@
                                                                         <input data-need-create-iframe-datepicker="yes"  data-format="${__screen(data[key].dates.format)}" data-date-separator="${__screen(data[key].dates.separator)}" data-duration-title="${__screen(data[key].dates.durationTitle)}" value="${__screen(data[key].dates.defValue)}" name="tpm_params[date_range]" id="${key_}-datepicker" type="text" class="datepicker form-control" >
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-2 col-sm-6">
+                                                                <div class="col-md-2 col-sm-6 col-xs-6">
                                                                     <div class="form-group">
                                                                         <label>
                                                                             ${__screen(data[key].adults.title)}
                                                                         </label>
-                                                                        <select data-without="yes" data-iframe-select-height="200" data-need-create-iframe-select="yes" id="${key_}-adults-select" name="tpm_params[adults]" class="form-control select2">
+                                                                        <select ${""/*data-without="yes" data-iframe-select-height="200" data-need-create-iframe-select="yes"*/} id="${key_}-adults-select" name="tpm_params[adults]" class="form-control select2">
                                                                             <option data-span-text="1" ${Number(data[key].adults.defValue) === 1 ? `selected=""` : ``} value="1">1</option>
                                                                             <option data-span-text="2" ${Number(data[key].adults.defValue) === 2 ? `selected=""` : ``} value="2">2</option>
                                                                             <option data-span-text="3" ${Number(data[key].adults.defValue) === 3 ? `selected=""` : ``} value="3">3</option>
@@ -409,7 +410,7 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-2 col-sm-6">
+                                                                <div class="col-md-2 col-sm-6 col-xs-6">
                                                                     <div class="form-group">
                                                                         <label>
                                                                             ${__screen(data[key].children.title)}
@@ -423,7 +424,7 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-2 col-sm-12">
+                                                                <div class="col-md-2 col-sm-6 col-xs-6">
                                                                     <div class="form-group btn-search-area">
                                                                         <button data-url="${__screen(data[key].url)}" data-onclick-handler-name="search" type="button" class="btn btn-primary">${__screen(data[key].button.title)}</button>
                                                                     </div>
@@ -436,7 +437,7 @@
                                                 </div>
                                             </div>
                                         </div>`;
-        
+
     }
 
     Travelsoft.forms = {
@@ -481,7 +482,7 @@
                                                 }
                                                 return __data;
                                             })(resp.data, options)
-                            );
+                                            );
 
                             Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById(options.parent_iframe_id);
                             Travelsoft.utils.HWatcher.watch(document.body);
@@ -498,9 +499,7 @@
 
                                     } else {
                                         tab.one("shown.bs.tab", function () {
-
                                             __init(tab, options);
-
                                         });
                                     }
                                 });

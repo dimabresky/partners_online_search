@@ -200,17 +200,14 @@
                  */
                 datepicker: function (options) {
 
-                    var iframe, __options;
+                    var iframe, __options, left = options.left - 303 + options.width;
 
                     options.plugin_name = "datepicker";
 
                     __options = __commonIframesOptions(options);
                     
-                    delete(__options.styles.width);
-                    
-                    __options.styles["min-width"] = options.width + "px";
-                    
-                    __options.styles["max-width"] = "582px";
+                    __options.styles.width = "303px";
+                    __options.styles.left = left + "px"; 
                     
                     __options.iframeStylesheets += `<link rel="stylesheet" href="${Travelsoft.CSS_URL + "/daterangepicker.min.css"}">` + __options.iframeStylesheets; 
                     __options.iframeScripts = (function (options) {

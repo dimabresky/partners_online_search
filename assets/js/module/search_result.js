@@ -284,6 +284,7 @@
 
                     queryParts.push("tpm_params[type]=" + options.type);
                     queryParts.push("tpm_params[page]=" + options.page);
+                    queryParts.push("tpm_params[citizen_price]=" + options.citizen_price);
                     queryParts.push("tpm_params[number_per_page]=" + options.numberPerPage);
                     queryParts.push("tpm_params[agent]=" + options.agent);
                     queryParts.push("tpm_params[hash]=" + options.hash);
@@ -587,7 +588,7 @@
             }
 
             if (data.medecine_services) {
-                html += __collapsePanel("Медицинские слуги", (function (services) {
+                html += __collapsePanel("Медицинские услуги", (function (services) {
 
                     var html = `<div class="featured-service">`;
                     for (var section_id in services.MED_SERVICES_GROUP) {

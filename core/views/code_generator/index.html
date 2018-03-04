@@ -82,7 +82,7 @@
                         <input name="hash" type="hidden" value="{{hash}}">
                         <div class="radio">
                             <label>
-                                <input class="toggle" type="radio" data-target="sub-block~search-result-options~placements-number-per-page" name="result" value="placements">
+                                <input class="toggle" type="radio" data-target="sub-block~search-result-options~placements-number-per-page~citizen_price" name="result" value="placements">
                                 проживаниям
                             </label>
                             <div class="toggle-area" style="display: none" id="placements-number-per-page">
@@ -97,7 +97,7 @@
 
                         <div class="radio">
                             <label>
-                                <input class="toggle" type="radio" data-target="sub-block~search-result-options~sanatorium-number-per-page" name="result" value="sanatorium">
+                                <input class="toggle" type="radio" data-target="sub-block~search-result-options~sanatorium-number-per-page~citizen_price" name="result" value="sanatorium">
                                 санаториям
                             </label>
                             <div class="toggle-area" style="display: none" id="sanatorium-number-per-page">
@@ -124,7 +124,15 @@
                                 </select>
                             </div>
                         </div>
-
+                        <div class="toggle-area" style="display: none" id="citizen_price">
+                            <label>Отображать типы цен для граждан</label>
+                            <select class="form-control" name="citizen_price">
+                                <option selected="" value="">...</option>
+                                <option value="333">РБ</option>
+                                <option value="332">РФ</option>
+                                <option value="356">Европы</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div id="generator-block">

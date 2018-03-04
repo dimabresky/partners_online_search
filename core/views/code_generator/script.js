@@ -81,6 +81,8 @@ var Travelsoft = Travelsoft || {};
             
             var number_per_page = 10;
             
+            var citizen_price = "";
+            
             var rand = Math.ceil(Math.random()*1000);
             
             if (render_type === "forms") {
@@ -139,6 +141,8 @@ var Travelsoft = Travelsoft || {};
                     
                     number_per_page = document.querySelector(`select[name='${search_result_object}_number_per_page']`).value;
                     
+                    citizen_price = document.querySelector(`select[name='citizen_price']`).value;
+                    
                     document.getElementById("code-area").value = `
                     <div id="search-result-iframe-block-${rand}"><span>Идет загрузка результатов поиска...</span></div>
                     <script src="https://vetliva.ru/travelsoft.pm/assets/js/bundles/init.js"></script>
@@ -148,6 +152,7 @@ var Travelsoft = Travelsoft || {};
                                 insertion_id: "search-result-iframe-block-${rand}",
                                 type: "${search_result_object}",
                                 numberPerPage: ${number_per_page},
+                                citizen_price: "${citizen_price}",
                                 agent: "${document.querySelector("input[name='agent']").value}",
                                 hash: "${document.querySelector("input[name='hash']").value}"
                             }

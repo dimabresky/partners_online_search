@@ -269,7 +269,9 @@ class API implements interfaces\API {
             $request["date_from"] = strtotime($dates[0]);
             $request["date_to"] = strtotime($dates[1]);
         }
-
+        if ($parameters["citizen_price"]) {
+            $request["citizen_price"] = $parameters["citizen_price"];
+        }
         $complex_logic = null;
         if ($parameters["id"]) {
 
@@ -352,7 +354,7 @@ class API implements interfaces\API {
 
         return $this->$method((array) $this->getOffers(array(
                             "RETURN_RESULT" => "Y",
-                            "FILTER_BY_PRICES_FOR_CITIZEN" => "N",
+                            "FILTER_BY_PRICES_FOR_CITIZEN" => "Y",
                             "TYPE" => $type,
                             "__BOOKING_REQUEST" => $parameters
                         )), $parameters);
@@ -377,7 +379,7 @@ class API implements interfaces\API {
                 foreach ($arrratesdata as $rid => $arrdata) {
 
                     if (!isset($arRates[$rid])) {
-                        $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID", "UF_BR_PRICES"))));
+                        $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID", "UF_BR_PRICES", "UF_RF_PRICES", "UF_EU_PRICES"))));
                     }
 
                     $currency_id = $this->getCurrencyIdByCode("BYN");
@@ -402,13 +404,22 @@ class API implements interfaces\API {
                         $resize = \CFile::ResizeImageGet($arService[$sid]["UF_PICTURES"][0], array('width' => 410, 'height' => 250), BX_RESIZE_IMAGE_EXACT, true, array(), false, 80);
                         $img_src = $resize['src'];
                     }
-
+                    
+                    $citizenpriceTitle = null;
+                    if ($arRates[$rid]["UF_BR_PRICES"]) {
+                        $citizenpriceTitle = "(для граждан РБ)";
+                    } elseif ($arRates[$rid]["UF_RF_PRICES"]) {
+                        $citizenpriceTitle = "(для граждан РФ)";
+                    } elseif ($arRates[$rid]["UF_EU_PRICES"]) {
+                        $citizenpriceTitle = "(для граждан Европы)";
+                    }
+                    
                     $result[] = array(
                         "date" => null,
                         "img_src" => $img_src,
                         "service" => $arService[$sid]["UF_NAME"],
                         "rate" => $arRates[$rid]["UF_NAME"],
-                        "citizenprice" => $arRates[$rid]["UF_BR_PRICES"] ? "(для граждан РБ)" : null,
+                        "citizenprice" => $citizenpriceTitle,
                         "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id),
                         "add2cart" => $this->add2CartHashing($add2cart)
                     );
@@ -602,7 +613,7 @@ class API implements interfaces\API {
 
             $arOffers = $this->getOffers(array(
                 "RETURN_RESULT" => "Y",
-                "FILTER_BY_PRICES_FOR_CITIZEN" => "N",
+                "FILTER_BY_PRICES_FOR_CITIZEN" => "Y",
                 "TYPE" => $other["type"],
                 "__BOOKING_REQUEST" => $other["request"],
                 "MP" => "Y"
@@ -1134,19 +1145,10 @@ class API implements interfaces\API {
      */
     protected function getResizedPictures(array $pics_ids) {
         $result = array("big" => null, "small" => null);
-        $arWaterMark = Array(
-            array(
-                "name" => "watermark",
-                "position" => "topright", // Положение
-                "type" => "image",
-                "size" => "real",
-                "file" => NO_PHOTO_PATH_WATERMARK, // Путь к картинке
-                "fill" => "exact",
-            )
-        );
+        
         foreach ($pics_ids as $id) {
-            $result["big"][] = \CFile::ResizeImageGet($id, Array('width' => 1170, 'height' => 440), BX_RESIZE_IMAGE_EXACT, true, $arWaterMark)["src"];
-            $result["small"][] = \CFile::ResizeImageGet($id, Array('width' => 90, 'height' => 60), BX_RESIZE_IMAGE_EXACT, true, $arWaterMark)["src"];
+            $result["big"][] = \CFile::ResizeImageGet($id, Array('width' => 1170, 'height' => 440), BX_RESIZE_IMAGE_EXACT, true)["src"];
+            $result["small"][] = \CFile::ResizeImageGet($id, Array('width' => 90, 'height' => 60), BX_RESIZE_IMAGE_EXACT, true)["src"];
         }
 
         return $result;
@@ -1164,9 +1166,9 @@ class API implements interfaces\API {
         if (!empty($data[$property_code]["VALUE"])) {
             $arServicesId = $data[$property_code]["VALUE"];
         }
-
+        
         if (!empty($data[$property_code . "_PAID"]["VALUE"])) {
-            $arServicesId = array_merge($arServicesId, $data[$property_code][$property_code . "_PAID"]["VALUE"]);
+            $arServicesId = array_merge($arServicesId, (array)$data[$property_code . "_PAID"]["VALUE"]);
         }
 
         if (!empty($arServicesId)) {
