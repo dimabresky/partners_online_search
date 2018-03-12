@@ -260,7 +260,7 @@
                     },
                     attributes: {
                         src: "about:blank",
-                        id: "search-result",
+                        id: "search-result_" + options.insertion_id,
                         scrolling: "no"
                     },
                     iframeContent: ``,

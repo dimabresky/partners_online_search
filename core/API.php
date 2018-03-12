@@ -41,7 +41,9 @@ class API implements interfaces\API {
     public function getFormRenderData(array $parameters): array {
 
         $types = explode("|", $parameters["types"]);
-
+        
+        $def_objects = explode("|", $parameters["def_objects"]);
+        
         $result = array();
 
         if (empty($types)) {
@@ -65,7 +67,7 @@ class API implements interfaces\API {
                 "objects" => "Cанаторий, мед.профиль"
             ),
         );
-        foreach ($types as $type) {
+        foreach ($types as $k => $type) {
 
             # получение объектов поиска
             # их фильтрация по наличию цены
@@ -78,7 +80,10 @@ class API implements interfaces\API {
                 $result__ = $this->toCache($type . "GetResult", array("IBLOCK_ID" => $storeID, "ACTIVE" => "Y", "ID" => $ids), array("*"), null);
 
                 if (!empty($result__)) {
-
+                    
+                    $def_selected = !empty($parameters["id"]) &&
+                            $active === $type ? $parameters["id"] : array($def_objects[$k]);
+                    
                     $result[$type] = array(
                         "objects" => array(
                             "forSelect" => array(),
@@ -125,7 +130,7 @@ class API implements interfaces\API {
                             "id" => $res["id"],
                             "source_name" => $res["name"],
                             "name" => implode(", ", $arrname),
-                            "isSelected" => in_array($res["id"], $parameters["id"])
+                            "isSelected" => in_array($res["id"], $def_selected)
                         );
                     }
                 }
@@ -365,6 +370,8 @@ class API implements interfaces\API {
         if (empty($offers)) {
             return array();
         }
+        
+        $arr_uf = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFields("HLBLOCK_" . \travelsoft\booking\Utils::getOpt("rates"));
 
         $result = $arRates = $arServices = array();
 
@@ -406,11 +413,11 @@ class API implements interfaces\API {
                     }
                     
                     $citizenpriceTitle = null;
-                    if ($arRates[$rid]["UF_BR_PRICES"]) {
+                    if ($arRates[$rid]["UF_BR_PRICES"] && $arr_uf["UF_BR_PRICES"]["ID"] == $parameters["citizen_price"]) {
                         $citizenpriceTitle = "(для граждан РБ)";
-                    } elseif ($arRates[$rid]["UF_RF_PRICES"]) {
+                    } elseif ($arRates[$rid]["UF_RF_PRICES"] && $arr_uf["UF_RF_PRICES"]["ID"] == $parameters["citizen_price"]) {
                         $citizenpriceTitle = "(для граждан РФ)";
-                    } elseif ($arRates[$rid]["UF_EU_PRICES"]) {
+                    } elseif ($arRates[$rid]["UF_EU_PRICES"] && $arr_uf["UF_EU_PRICES"]["ID"] == $parameters["citizen_price"]) {
                         $citizenpriceTitle = "(для граждан Европы)";
                     }
                     
@@ -424,6 +431,7 @@ class API implements interfaces\API {
                         "add2cart" => $this->add2CartHashing($add2cart)
                     );
                 }
+                
             }
         }
 

@@ -155,11 +155,13 @@
 
     /**
      * @param {String} content
+     * @param {String} main_container
      * @returns {undefined}
      */
-    function __insert(content) {
+    function __insert(content, main_container) {
+        
         document.body.innerHTML = content;
-        Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById("search-result");
+        Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById("search-result_" + main_container);
         Travelsoft.utils.HWatcher.watch(document.getElementById("container"));
     }
 
@@ -258,7 +260,7 @@
                                                 </div>`;
 
 
-        __insert(__cache[data.pager.page]);
+        __insert(__cache[data.pager.page], data.main_container);
     }
 
     /**
@@ -270,7 +272,7 @@
 
         if (typeof __cache[options.page] === 'string') {
             // берем из кеша, если есть
-            __insert(__cache[options.page]);
+            __insert(__cache[options.page], options.insertion_id);
         } else {
             // запрос данных для отображения результата поиска
             Travelsoft.utils.sendRequest("GetSearchResultRenderData", [(function () {
@@ -305,12 +307,13 @@
                             pager: {
                                 page: 1,
                                 numberPerPage: 0
-                            }
+                            },
+                            main_container: options.insertion_id
                         });
                     }
 
                     __resp.data.pager.numberPerPage = options.numberPerPage;
-
+                    __resp.data.main_container = options.insertion_id;
                     __render2Cache(__resp.data);
 
                 };
@@ -718,7 +721,7 @@
         init: function (options) {
             
             var opt = options;
-
+            
             __renderPage(opt);
 
             // show offers

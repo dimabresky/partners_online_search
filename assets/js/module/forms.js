@@ -453,14 +453,23 @@
             utils.sendRequest("GetFormsRenderData", [
                 "tpm_params[types]=" + options.types.join("|"),
                 "tpm_params[active]=" + options.active,
-                (function () {
-                    return window.parent.location.search
+                (function (options) {
+                    
+                    var parameters = "";
+                    
+                    if ($.isArray(options.def_objects)) {
+                        parameters += "tpm_params[def_objects]=" + options.def_objects.join("|");
+                    }
+                    
+                    parameters += window.parent.location.search
                             .replace("?", "")
                             .split("&")
                             .filter(function (element) {
                                 return element.length > 0 && element.indexOf("tpm_params") === 0;
                             }).join("&");
-                })()
+                    
+                    return parameters;
+                })(options)
             ],
                     (function (options) {
 

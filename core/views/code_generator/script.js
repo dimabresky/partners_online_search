@@ -75,6 +75,8 @@ var Travelsoft = Travelsoft || {};
             
             var tabs = [];
             
+            var def_objects = [];
+            
             var urls = [];
             
             var search_result_object = "";
@@ -91,6 +93,7 @@ var Travelsoft = Travelsoft || {};
                 for (var i = 0; i < els.length; i++) {
                     tab = els[i].value;
                     urls.push(`"${document.querySelector(`input[name="${tab}_url"]`).value}"`);
+                    def_objects.push(`"${document.querySelector(`input[name="${tab}_id"]`).value}"`);
                     tabs.push(`"${tab}"`);
                 }
                 
@@ -116,6 +119,7 @@ var Travelsoft = Travelsoft || {};
                                         types: [${tabs.join(",")}],
                                         active: ${active_tab},
                                         url: [${urls.join(",")}],
+                                        def_objects: [${def_objects.join(",")}],
                                         selectIframeCss: "",
                                         datepickerIframeCss: "",
                                         childrenIframeCss: "",
