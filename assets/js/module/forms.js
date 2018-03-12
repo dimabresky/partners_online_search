@@ -461,7 +461,7 @@
                         parameters += "tpm_params[def_objects]=" + options.def_objects.join("|");
                     }
                     
-                    parameters += window.parent.location.search
+                    parameters += "&" + window.parent.location.search
                             .replace("?", "")
                             .split("&")
                             .filter(function (element) {
