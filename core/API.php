@@ -245,7 +245,7 @@ class API implements interfaces\API {
         }
         return $result;
     }
-    
+        
     /**
      * Получение данных для отображения результатов поиска
      * @param array $parameters
@@ -386,7 +386,7 @@ class API implements interfaces\API {
                 foreach ($arrratesdata as $rid => $arrdata) {
 
                     if (!isset($arRates[$rid])) {
-                        $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID", "UF_BR_PRICES", "UF_RF_PRICES", "UF_EU_PRICES"))));
+                        $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME" . POSTFIX_PROPERTY, "UF_NOTE" . POSTFIX_PROPERTY, "ID", "UF_BR_PRICES", "UF_RF_PRICES", "UF_EU_PRICES"))));
                     }
 
                     $currency_id = $this->getCurrencyIdByCode("BYN");
@@ -425,7 +425,8 @@ class API implements interfaces\API {
                         "date" => null,
                         "img_src" => $img_src,
                         "service" => $arService[$sid]["UF_NAME"],
-                        "rate" => $arRates[$rid]["UF_NAME"],
+                        "rate" => $arRates[$rid]["UF_NAME" . POSTFIX_PROPERTY],
+                        "rate_desc" => $arRates[$rid]["UF_NOTE" . POSTFIX_PROPERTY],
                         "citizenprice" => $citizenpriceTitle,
                         "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id),
                         "add2cart" => $this->add2CartHashing($add2cart)

@@ -182,8 +182,8 @@
                                                                                 </div>`;
             }
             return items.map(function (item) {
-                return `<div class="row">
-                                                                                    <div class="thumbnail row-flex row-flex-wrap mrtb-10">
+                return `<div class="row thumbnail mrtb-10">
+                                                                                    <div class="row-flex row-flex-wrap">
                                                                                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                                                         ${(function (img) {
                     if (img) {
@@ -359,6 +359,10 @@
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 text-right">
                                     <button data-add2cart="${__screen(data[i].add2cart)}" class="btn btn-primary booking" type="button">Бронировать</button>
+                                    <div class="about-rate"><a role="button" href="javascript:void(0)">О тарифе</a></div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 rate-desc hidden">
+                                        <div class="rate-desc-text">${__screen(data[i].rate_desc)}</div>
                                 </div>
                             </div>`;
             }
@@ -487,7 +491,7 @@
 
         $parent.append(`
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapsing-block detail-desc-block hidden">
-                <div style="width: 100%">
+                
                     ${(function (data) {
 
             var html = ``;
@@ -637,7 +641,7 @@
             html += `</div>`;
             return html;
         })(data)}
-                </div>
+                
             </div>
         `);
 
@@ -776,7 +780,14 @@
 
                 e.preventDefault();
             });
-
+            
+            // show rate description
+            $(document).on("click", ".about-rate", function (e) {
+                
+                $(this).closest(".offer-row").find(".rate-desc").toggleClass("hidden");
+                e.preventDefault();
+            });
+            
             // show detail description
             $(document).on("click", ".detail-link.__desc", function (e) {
 

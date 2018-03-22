@@ -116,6 +116,7 @@ interface API {
      *          "img_src" => изображение услуги (если нужно),
      *          "service" => название услуги (если нужно),
      *          "rate" => название тарифа (если нужно),
+     *          "rate_desc" => описание тарифа (если нужно),
      *          "citizenprice" => приписка, что цена только для граждан РБ (если нужно)
      *          "price" => цена,
      *          "add2cart" => параметры для бронирования
@@ -177,7 +178,7 @@ interface API {
      * ]
      */
     public function getDetailVideoRenderData (array $parameters) : array;
-    
+        
     /**
      * Выполняет процедуру бронирования
      * @param array $parameters

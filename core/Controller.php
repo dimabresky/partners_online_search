@@ -101,7 +101,7 @@ class Controller {
                 $this->_sendResponse($data, $error, $callback);
 
                 break;
-
+                
             case "Booking":
 
                 $this->_api->booking($params);
