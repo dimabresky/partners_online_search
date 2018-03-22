@@ -32,7 +32,10 @@ var Travelsoft=Travelsoft||{};(function(a){"use strict";a.SITE_ADDRESS="https://
                                                                                                     <a data-request='${JSON.stringify(C.request)}' class="detail-link __on-map" href="#">На карте</a>
                                                                                                     <a data-request='${JSON.stringify(C.request)}' class="detail-link __video" href="#">Видео</a>
                                                                                                 </div>
-                                                                                                <button data-offers-request='${JSON.stringify(C.request)}' class="btn btn-primary show-offers" type="button"><span class="price-from">${C.text.price}</span> <span class="chevron glyphicon glyphicon-chevron-down" aria-hidden="true"></button>
+                                                                                                
+                                                                                            </div>
+                                                                                            <div class="show-offers-block flex-grow">
+                                                                                                    <button data-offers-request='${JSON.stringify(C.request)}' class="btn btn-primary show-offers" type="button"><span class="price-from">${C.text.price}</span> <span class="chevron glyphicon glyphicon-chevron-down" aria-hidden="true"></button>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>

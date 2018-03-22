@@ -73,9 +73,7 @@ div[id^="map-"], .video-frame {
 }
 
 .details-links {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    text-align: left;
 }
 
 .detail-link {

@@ -238,7 +238,9 @@
                                                                                                     <a data-request='${JSON.stringify(item.request)}' class="detail-link __on-map" href="#">На карте</a>
                                                                                                     <a data-request='${JSON.stringify(item.request)}' class="detail-link __video" href="#">Видео</a>
                                                                                                 </div>
-                                                                                                <button data-offers-request='${JSON.stringify(item.request)}' class="btn btn-primary show-offers" type="button"><span class="price-from">${item.text.price}</span> <span class="chevron glyphicon glyphicon-chevron-down" aria-hidden="true"></button>
+                                                                                            </div>
+                                                                                            <div class="show-offers-block flex-grow">
+                                                                                                    <button data-offers-request='${JSON.stringify(item.request)}' class="btn btn-primary show-offers" type="button"><span class="price-from">${item.text.price}</span> <span class="chevron glyphicon glyphicon-chevron-down" aria-hidden="true"></button>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
