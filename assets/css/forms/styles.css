@@ -1,0 +1,23 @@
+
+/* 
+    Created on : 13.12.2017, 14:02:53
+    Author     : dimabresky
+*/
+
+.btn-search-area {
+    margin-top: 24px;
+    height: 40px;
+}
+
+.btn-search-area button {
+    width: 100%;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.iframe-closer {
+    position:absolute; 
+    right: 25px
+}

@@ -1,0 +1,207 @@
+
+/* 
+    Created on : 12.01.2018, 18:18:24
+    Author     : dimabresky
+*/
+
+body {
+    padding: 0 10px;
+}
+
+.daterangepicker {
+    position: relative !important;
+    max-width: 572px !important;
+    font-size: 11px !important;
+}
+
+#datepicker-notice {
+    padding-top: 10px;
+    font-style: italic;
+}
+
+.dropdown-menu {
+    float: none !important;
+}
+
+.calendar.right {
+    display: none !important;
+}
+
+.daterangepicker_input{
+    display: none !important;
+}
+
+/* loader styles  */
+#floatBarsG{
+    position:relative;
+    width:84px;
+    height:10px;
+    margin:auto;
+}
+
+.floatBarsG{
+    position:absolute;
+    top:0;
+    background-color:rgb(0,0,0);
+    width:10px;
+    height:10px;
+    animation-name:bounce_floatBarsG;
+    -o-animation-name:bounce_floatBarsG;
+    -ms-animation-name:bounce_floatBarsG;
+    -webkit-animation-name:bounce_floatBarsG;
+    -moz-animation-name:bounce_floatBarsG;
+    animation-duration:0.975s;
+    -o-animation-duration:0.975s;
+    -ms-animation-duration:0.975s;
+    -webkit-animation-duration:0.975s;
+    -moz-animation-duration:0.975s;
+    animation-iteration-count:infinite;
+    -o-animation-iteration-count:infinite;
+    -ms-animation-iteration-count:infinite;
+    -webkit-animation-iteration-count:infinite;
+    -moz-animation-iteration-count:infinite;
+    animation-direction:normal;
+    -o-animation-direction:normal;
+    -ms-animation-direction:normal;
+    -webkit-animation-direction:normal;
+    -moz-animation-direction:normal;
+    transform:scale(.3);
+    -o-transform:scale(.3);
+    -ms-transform:scale(.3);
+    -webkit-transform:scale(.3);
+    -moz-transform:scale(.3);
+}
+
+#floatBarsG_1{
+    left:0;
+    animation-delay:0.386s;
+    -o-animation-delay:0.386s;
+    -ms-animation-delay:0.386s;
+    -webkit-animation-delay:0.386s;
+    -moz-animation-delay:0.386s;
+}
+
+#floatBarsG_2{
+    left:10px;
+    animation-delay:0.4825s;
+    -o-animation-delay:0.4825s;
+    -ms-animation-delay:0.4825s;
+    -webkit-animation-delay:0.4825s;
+    -moz-animation-delay:0.4825s;
+}
+
+#floatBarsG_3{
+    left:21px;
+    animation-delay:0.589s;
+    -o-animation-delay:0.589s;
+    -ms-animation-delay:0.589s;
+    -webkit-animation-delay:0.589s;
+    -moz-animation-delay:0.589s;
+}
+
+#floatBarsG_4{
+    left:31px;
+    animation-delay:0.6855s;
+    -o-animation-delay:0.6855s;
+    -ms-animation-delay:0.6855s;
+    -webkit-animation-delay:0.6855s;
+    -moz-animation-delay:0.6855s;
+}
+
+#floatBarsG_5{
+    left:42px;
+    animation-delay:0.782s;
+    -o-animation-delay:0.782s;
+    -ms-animation-delay:0.782s;
+    -webkit-animation-delay:0.782s;
+    -moz-animation-delay:0.782s;
+}
+
+#floatBarsG_6{
+    left:52px;
+    animation-delay:0.8785s;
+    -o-animation-delay:0.8785s;
+    -ms-animation-delay:0.8785s;
+    -webkit-animation-delay:0.8785s;
+    -moz-animation-delay:0.8785s;
+}
+
+#floatBarsG_7{
+    left:63px;
+    animation-delay:0.975s;
+    -o-animation-delay:0.975s;
+    -ms-animation-delay:0.975s;
+    -webkit-animation-delay:0.975s;
+    -moz-animation-delay:0.975s;
+}
+
+#floatBarsG_8{
+    left:73px;
+    animation-delay:1.0715s;
+    -o-animation-delay:1.0715s;
+    -ms-animation-delay:1.0715s;
+    -webkit-animation-delay:1.0715s;
+    -moz-animation-delay:1.0715s;
+}
+
+
+
+@keyframes bounce_floatBarsG{
+    0%{
+        transform:scale(1);
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        transform:scale(.3);
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-o-keyframes bounce_floatBarsG{
+    0%{
+        -o-transform:scale(1);
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        -o-transform:scale(.3);
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-ms-keyframes bounce_floatBarsG{
+    0%{
+        -ms-transform:scale(1);
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        -ms-transform:scale(.3);
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-webkit-keyframes bounce_floatBarsG{
+    0%{
+        -webkit-transform:scale(1);
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        -webkit-transform:scale(.3);
+        background-color:rgb(255,255,255);
+    }
+}
+
+@-moz-keyframes bounce_floatBarsG{
+    0%{
+        -moz-transform:scale(1);
+        background-color:rgb(0,0,0);
+    }
+
+    100%{
+        -moz-transform:scale(.3);
+        background-color:rgb(255,255,255);
+    }
+}
