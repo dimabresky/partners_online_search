@@ -16,43 +16,19 @@
     "use strict";
 
     var __cache = {};
-    
-    function __scrollto ($element, $parentBlock, delta) {
+
+    function __scrollto($element, $parentBlock, delta) {
         delta = delta || 0;
         $(parent.document).find("html").animate({scrollTop: $element.offset().top + $parentBlock.offset().top - delta}, 500);
     }
-    
+
     function __initSlider($parent) {
 
-        var slidelager = $parent.find(".slide-room-lg");
-        var slidethumnail = $parent.find(".slide-room-sm");
-
-        slidelager.owlCarousel({
-            singleItem: true,
-            autoPlay: false,
-            navigation: true,
-            navigationText: ["<span class='prev-next-room prev-room'></span>", "<span class='prev-next-room next-room'></span>"],
-            pagination: false,
-        });
-
-        slidethumnail.owlCarousel({
-            mouseDrag: false,
-            navigation: true,
-            navigationText: ["<span class='prev-next-room prev-room'></span>", "<span class='prev-next-room next-room'></span>"],
-            itemsCustom: [[320, 3], [480, 5], [768, 6], [992, 7], [1200, 8]],
-            pagination: false
-        });
-
-        $(".slide-room-sm").on("click", ".owl-item", function (e) {
-            e.preventDefault();
-            if ($(this).hasClass('synced')) {
-                return false;
-            } else {
-                $('.synced').removeClass('synced')
-                $(this).addClass('synced')
-                var number = $(this).data("owlItem");
-                slidelager.data('owlCarousel').goTo(number);
-            }
+        $parent.find(".rslides").responsiveSlides({
+            auto: false,
+            pager: false,
+            nav: true,
+            speed: 500
         });
 
     }
@@ -159,7 +135,7 @@
      * @returns {undefined}
      */
     function __insert(content, main_container) {
-        
+
         document.body.innerHTML = content;
         Travelsoft.utils.HWatcher.__parent = window.parent.document.getElementById("search-result_" + main_container);
         Travelsoft.utils.HWatcher.watch(document.getElementById("container"));
@@ -375,7 +351,7 @@
             </div>
         `);
 
-        
+
 
         $parent.find(".offers").removeClass("hidden");
 
@@ -499,34 +475,16 @@
             var html = ``;
             if ($.isArray(data.pictures.big)) {
                 html += `<section id="${slider_id}" class="detail-slider">
-                                    <div class="slider-room-lg">
-                                    <div class="slide-room-lg">
+                                    <ul class="rslides">
                                         ${(function (big) {
 
                     html = "";
                     for (var i = 0; i < big.length; i++) {
-                        html += `<img src="${Travelsoft.SITE_ADDRESS + big[i]}">`;
+                        html += `<li><img src="${Travelsoft.SITE_ADDRESS + big[i]}"></li>`;
                     }
                     return html;
                 })(data.pictures.big)}
-                                    </div>
-                                </div>
-                                <div class="slider-room-sm">
-                                    <div class="row">
-                                        <div class="col-md-8 col-md-offset-2">
-                                            <div class="slide-room-sm">
-                                                ${(function (small) {
-
-                    html = "";
-                    for (var i = 0; i < small.length; i++) {
-                        html += `<img src="${Travelsoft.SITE_ADDRESS + small[i]}">`;
-                    }
-                    return html;
-                })(data.pictures.small)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </ul>
                             </section>`;
 
 
@@ -678,7 +636,7 @@
                                         </div>
                                     </div>`);
 
-        
+
 
         $parent.find(".show-on-map-block").removeClass("hidden");
 
@@ -688,7 +646,7 @@
 
         __initMap($(`#${mapContainerId}`));
     }
-    
+
     /**
      * Отрисовка блока с видео
      * @param {Object} data
@@ -708,7 +666,7 @@
                                         </div>
                                     </div>`);
 
-        
+
 
         $parent.find(".video-block").removeClass("hidden");
 
@@ -716,7 +674,7 @@
             cb();
         }
     }
-    
+
     Travelsoft.searchResult = {
 
         /**
@@ -725,9 +683,9 @@
          * @returns {undefined}
          */
         init: function (options) {
-            
+
             var opt = options;
-            
+
             __renderPage(opt);
 
             // show offers
@@ -766,8 +724,8 @@
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
                                 __renderInfoBlock({message: "Предложения отсутствуют."}, $parent, function () {
-                                __removeSpiner($this);
-                            });
+                                    __removeSpiner($this);
+                                });
                                 return;
                             }
 
@@ -782,14 +740,14 @@
 
                 e.preventDefault();
             });
-            
+
             // show rate description
             $(document).on("click", ".about-rate", function (e) {
-                
+
                 $(this).closest(".offer-row").find(".rate-desc").toggleClass("hidden");
                 e.preventDefault();
             });
-            
+
             // show detail description
             $(document).on("click", ".detail-link.__desc", function (e) {
 
@@ -827,8 +785,8 @@
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
                                 __renderInfoBlock({message: "Информация отсутствует."}, $parent, function () {
-                                __removeSpiner($this);
-                            });
+                                    __removeSpiner($this);
+                                });
                                 return;
                             }
 
@@ -862,15 +820,15 @@
                     });
 
                 } else {
-                    
+
                     __toggleCollapsingBlocks(null, function () {
-                                __chevronDownAll();
-                            }, function () {
-                                __chevronDownAll();
-                            });
+                        __chevronDownAll();
+                    }, function () {
+                        __chevronDownAll();
+                    });
                     __insertSpiner($this);
                     __renderInfoBlock({message: "Идет загрузка карты. Пожалуйста, подождите..."}, $parent);
-                    
+
                     // get detail description
                     Travelsoft.utils.sendRequest("GetDetailMapRenderData", [$this.data("request").join("&")], (function ($parent) {
 
@@ -880,8 +838,8 @@
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
                                 __renderInfoBlock({message: "Информация отсутствует."}, $parent, function () {
-                                __removeSpiner($this);
-                            });
+                                    __removeSpiner($this);
+                                });
                                 return;
                             }
 
@@ -896,7 +854,7 @@
 
                 e.preventDefault();
             });
-            
+
             // show video
             $(document).on("click", ".detail-link.__video", function (e) {
 
@@ -915,15 +873,15 @@
                     });
 
                 } else {
-                    
+
                     __toggleCollapsingBlocks(null, function () {
-                                __chevronDownAll();
-                            }, function () {
-                                __chevronDownAll();
-                            });
+                        __chevronDownAll();
+                    }, function () {
+                        __chevronDownAll();
+                    });
                     __insertSpiner($this);
                     __renderInfoBlock({message: "Идет загрузка видео. Пожалуйста, подождите..."}, $parent);
-                    
+
                     // get video
                     Travelsoft.utils.sendRequest("GetDetailVideoRenderData", [$this.data("request").join("&")], (function ($parent) {
 
@@ -933,18 +891,18 @@
                             if (resp.isError) {
                                 console.warn(resp.errorMessage);
                                 __renderInfoBlock({message: "Видео отсутствует."}, $parent, function () {
-                                __removeSpiner($this);
-                            });
+                                    __removeSpiner($this);
+                                });
                                 return;
                             }
-                            
+
                             if (!resp.data.code) {
                                 __renderInfoBlock({message: "Видео отсутствует."}, $parent, function () {
-                                __removeSpiner($this);
-                            });
+                                    __removeSpiner($this);
+                                });
                                 return;
                             }
-                            
+
                             __renderDetailVideo(resp.data, $parent, function () {
                                 __removeSpiner($this);
                             });
@@ -987,7 +945,7 @@
                 }
 
             });
-            
+
             /**
              * Прокрутка страницы к схлопывающимся панелям
              */

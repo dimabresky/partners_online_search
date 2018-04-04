@@ -1156,7 +1156,7 @@ class API implements interfaces\API {
         $result = array("big" => null, "small" => null);
         
         foreach ($pics_ids as $id) {
-            $result["big"][] = \CFile::ResizeImageGet($id, Array('width' => 1170, 'height' => 440), BX_RESIZE_IMAGE_EXACT, true)["src"];
+            $result["big"][] = \CFile::ResizeImageGet($id, Array('width' => 1826, 'height' => 700), BX_RESIZE_IMAGE_EXACT, true)["src"];
             $result["small"][] = \CFile::ResizeImageGet($id, Array('width' => 90, 'height' => 60), BX_RESIZE_IMAGE_EXACT, true)["src"];
         }
 
