@@ -25,7 +25,7 @@
 }
 
 .rslides img {
-    min-height: 180px;
+    /*min-height: 161px;*/
     display: block;
     height: auto;
     float: left;
