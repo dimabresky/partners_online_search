@@ -337,11 +337,25 @@
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 text-right">
                                     <button data-add2cart="${__screen(data[i].add2cart)}" class="btn btn-primary booking" type="button">Бронировать</button>
-                                    <div class="about-rate"><a role="button" href="javascript:void(0)">О тарифе</a></div>
+                                    ${data[i].rate_desc.length > 0 ? `<div class="about-rate"><a role="button" href="javascript:void(0)">О тарифе</a></div>` : ``}
+                                    ${typeof data[i].room_desc === "object" && !$.isArray(data[i].room_desc) ? `<div class="about-room"><a role="button" href="javascript:void(0)">О номере</a></div>` : ``}
                                 </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 rate-desc hidden">
+                            ${data[i].rate_desc.length > 0 ? `<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 rate-desc hidden">
                                         <div class="rate-desc-text">${__screen(data[i].rate_desc)}</div>
-                                </div>
+                                </div>` : `` }
+                                
+                                ${typeof data[i].room_desc === "object" && !$.isArray(data[i].room_desc) ? `<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 room-desc hidden">
+                                            ${data[i].room_desc.SQUARE > 0 ? `<div class="square"><b>Площадь</b>: ${__screen(data[i].room_desc.SQUARE)}</div>` : ``}
+                                            ${data[i].room_desc.BAD1 > 0 ? `<div class="bad_1"><b>Количество одноместных кроватей</b>: ${__screen(data[i].room_desc.BAD1)}</div>` : ``}
+                                            ${data[i].room_desc.BAD2 > 0 ? `<div class="bad_2"><b>Количество двухместных кроватей</b>: ${__screen(data[i].room_desc.BAD2)}</div>` : ``}
+                                            ${data[i].room_desc.SOFA_BAD > 0 ? `<div class="sofa-bad"><b>Количество диван-кроватей</b>: ${__screen(data[i].room_desc.SOFA_BAD)}</div>` : ``}
+                                            ${data[i].room_desc.PLACES_MAIN > 0 ? `<div class="main-places"><b>Количество основных мест</b>: ${__screen(data[i].room_desc.PLACES_MAIN)}</div>` : ``}
+                                            ${data[i].room_desc.PLACES_ADD > 0 ? `<div class="add-places"><b>Количество дополнительных мест</b>: ${__screen(data[i].room_desc.PLACES_ADD)}</div>` : ``}
+                                            ${data[i].room_desc.PEOPLE > 0 ? `<div class="people"><b>Максимальное количество человек</b>: ${__screen(data[i].room_desc.PEOPLE)}</div>` : ``}
+                                            ${typeof $.isArray(data[i].room_desc.SERVICES) && data[i].room_desc.SERVICES.length > 0 ? `<div class="people"><b>Услуги</b>: ${data[i].room_desc.SERVICES.join(", ")}</div>` : ``}
+                                            ${data[i].room_desc.DESC > 0 ? `<div class="room-desc-text">${__screen(data[i].room_desc.DESC)}</div>` : ``}
+                                </div>`  : ``}
+                                
                             </div>`;
             }
 
@@ -745,6 +759,13 @@
             $(document).on("click", ".about-rate", function (e) {
 
                 $(this).closest(".offer-row").find(".rate-desc").toggleClass("hidden");
+                e.preventDefault();
+            });
+            
+            // show rate description
+            $(document).on("click", ".about-room", function (e) {
+
+                $(this).closest(".offer-row").find(".room-desc").toggleClass("hidden");
                 e.preventDefault();
             });
 
