@@ -201,3 +201,9 @@ div[id^="map-"], .video-frame {
     }
 
 }
+
+@media (max-width: 768px) {
+    .featured-service .service-accmd li {
+        width: unset;
+    }
+}

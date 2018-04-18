@@ -1,6 +1,6 @@
 <?php
 
-namespace travelsoft;
+namespace travelsoft\pm;
 
 /**
  * Logger

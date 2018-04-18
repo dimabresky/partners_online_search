@@ -2,4 +2,4 @@
 
 require "core/bootstrap.php";
 
-(new travesoft\pm\Controller())->executeRequestProcessing();
+(new travelsoft\pm\Controller())->executeRequestProcessing();

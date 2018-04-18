@@ -1,6 +1,6 @@
 <?php
 
-namespace travesoft\pm;
+namespace travelsoft\pm;
 
 /**
  * Класс для реализации api получения данных поиска
@@ -110,6 +110,7 @@ class API implements interfaces\API {
                         )
                     );
 
+                    $not_selected = true;
                     foreach ($result__ as $res) {
 
                         $arrname = array();
@@ -124,13 +125,23 @@ class API implements interfaces\API {
                             $arrname[] = $res['region'];
                         }
 
+                        $is_selected = in_array($res["id"], $def_selected);
+                        if ($is_selected) {
+                            $not_selected = false;
+                        }
                         $result[$type]["objects"]["forSelect"][] = array(
                             "id" => $res["id"],
                             "source_name" => $res["name"],
                             "name" => implode(", ", $arrname),
-                            "isSelected" => in_array($res["id"], $def_selected)
+                            "isSelected" => $is_selected
                         );
                     }
+                    array_unshift($result[$type]["objects"]["forSelect"], array(
+                        "id" => -1,
+                        "source_name" => "...",
+                        "name" => "...",
+                        "isSelected" => $not_selected
+                    ));
                 }
             }
         }
@@ -334,7 +345,7 @@ class API implements interfaces\API {
             header('Content-Type: text/html; charset=utf-8');
             echo $body;
         } catch (\Exception $e) {
-            (new Logger(__DIR__ . "log.txt"))->wrire($e->getMessage());
+            (new Logger(__DIR__ . "/log.txt"))->write($e->getMessage());
             header('Content-Type: text/html; charset=utf-8');
             echo "Произошла ошибка при бронировании. Повторите бронирование через 5 минут.";
         }
@@ -495,43 +506,43 @@ class API implements interfaces\API {
         header("HTTP/1.0 404 Not Found");
         die;
     }
-    
-    protected function _makeRoomDescriptionArray (array $arr_room) {
-        
+
+    protected function _makeRoomDescriptionArray(array $arr_room) {
+
         $result = array();
-        
+
         if (strlen($arr_room["UF_SERVICE_DESC" . POSTFIX_PROPERTY]) > 0) {
             $result["DESC"] = $arr_room["UF_SERVICE_DESC" . POSTFIX_PROPERTY];
         }
-        
+
         if ($arr_room["UF_PEOPLE"] > 0) {
             $result["PEOPLE"] = $arr_room["UF_PEOPLE"];
         }
-        
+
         if ($arr_room["UF_SOFA_BAD"] > 0) {
             $result["SOFA_BAD"] = $arr_room["UF_SOFA_BAD"];
         }
-        
+
         if ($arr_room["UF_SQUARE"] > 0) {
             $result["SQUARE"] = $arr_room["UF_SQUARE"];
         }
-        
+
         if ($arr_room["UF_PLACES_ADD"] > 0) {
             $result["PLACES_ADD"] = $arr_room["UF_PLACES_ADD"];
         }
-        
+
         if ($arr_room["UF_PLACES_MAIN"] > 0) {
             $result["PLACES_MAIN"] = $arr_room["UF_PLACES_MAIN"];
         }
-        
+
         if ($arr_room["UF_BAD1"] > 0) {
             $result["BAD1"] = $arr_room["UF_BAD1"];
         }
-        
+
         if ($arr_room["UF_BAD2"] > 0) {
             $result["BAD2"] = $arr_room["UF_BAD2"];
         }
-        
+
         if (!empty($arr_room["UF_SERVICES_IN_ROOM"])) {
 
             \Bitrix\Main\Loader::includeModule("iblock");
@@ -545,10 +556,10 @@ class API implements interfaces\API {
                 $result["SERVICES"][] = LANGUAGE_ID == "ru" ? $arFields["NAME"] : $arProperties["NAME" . POSTFIX_PROPERTY]["VALUE"];
             }
         }
-        
+
         return $result;
     }
-    
+
     protected function getPlacementsOffersRenderData(array $offers, array $parameters): array {
 
         return $this->getCommonOffersRenderData($offers, $parameters, "placements");
@@ -713,6 +724,7 @@ class API implements interfaces\API {
             $result["items"] = array();
 
             if ($result["pager"]["records"] > 0) {
+
                 $hashIsValid = $this->checkAgentHash((string) $other["agent"], (string) $other["hash"]);
                 unset($other["request"]["id"]);
                 $request = array();
@@ -784,7 +796,7 @@ class API implements interfaces\API {
      */
     protected function checkAgentHash(string $agent, string $hash) {
 
-        return md5($agent . $this->salt) === $hash;
+        return md5($agent . self::$salt) === $hash;
     }
 
     /**

@@ -19,7 +19,7 @@ if ($agent_id > 0) {
     require "interfaces/API.php";
     require "API.php";
     
-    $hash = travesoft\pm\API::agentHashing((string)$agent_id);
+    $hash = travelsoft\pm\API::agentHashing((string)$agent_id);
     
 } else {
     

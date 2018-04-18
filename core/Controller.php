@@ -1,6 +1,6 @@
 <?php
 
-namespace travesoft\pm;
+namespace travelsoft\pm;
 
 /**
  * Контроллер для обработки запросов с сайта партнера для поиска тур. услуг

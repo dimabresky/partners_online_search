@@ -247,7 +247,7 @@
      * @returns {undefined}
      */
     function __renderPage(options) {
-
+        
         if (typeof __cache[options.page] === 'string') {
             // берем из кеша, если есть
             __insert(__cache[options.page], options.insertion_id);
@@ -268,7 +268,7 @@
                     queryParts.push("tpm_params[number_per_page]=" + options.numberPerPage);
                     queryParts.push("tpm_params[agent]=" + options.agent);
                     queryParts.push("tpm_params[hash]=" + options.hash);
-
+                    
                     return queryParts.join("&");
 
                 })()], (function (options) {

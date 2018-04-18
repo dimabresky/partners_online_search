@@ -1,6 +1,6 @@
 <?php
 
-namespace travesoft\pm\interfaces;
+namespace travelsoft\pm\interfaces;
 
 /**
  * Интерфейс реализации API
