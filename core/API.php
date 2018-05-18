@@ -449,7 +449,7 @@ class API implements interfaces\API {
                         "img_src" => $img_src,
                         "service" => $arService[$sid]["UF_NAME" . POSTFIX_PROPERTY],
                         "rate" => $arRates[$rid]["UF_NAME" . POSTFIX_PROPERTY],
-                        "rate_desc" => $arRates[$rid]["UF_NOTE" . POSTFIX_PROPERTY],
+                        "rate_desc" => $arRates[$rid]["UF_NOTE" . POSTFIX_PROPERTY] ?: "",
                         "room_desc" => $this->_makeRoomDescriptionArray($arService[$sid]),
                         "citizenprice" => $citizenpriceTitle,
                         "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id),
@@ -612,6 +612,8 @@ class API implements interfaces\API {
                             "img_src" => null,
                             "service" => null,
                             "rate" => $arRates[$rid]["UF_NAME"],
+                            "rate_desc" => "",
+                            "room_desc" => "",
                             "citizenprice" => null,
                             "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id),
                             "add2cart" => $this->add2CartHashing($add2cart)
