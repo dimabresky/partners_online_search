@@ -190,5 +190,11 @@ interface API {
      * @param array $parameters
      */
     public function getStylesheet (array $parameters);
-            
+    
+    /**
+     * Отправка заявки на бронирование услуги в ситуаци, когда поиск ничего не дал
+     * @param array $parameters
+     * @return array ["isOk" => false|true]
+     */
+    public function sendCallbackForm (array $parameters): array;
 }

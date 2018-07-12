@@ -191,6 +191,25 @@ div[id^="map-"], .video-frame {
     font-size: 22px;
 }
 
+.callback-form {
+    margin-top: 20px;
+}
+
+.not-found-text{
+    font-weight: 500;
+    margin-top: 20px;
+    color: red;
+}
+
+.callback-form .star, .callback-form .error-container {
+    color:red;
+}
+
+.callback-form .message-ok {
+    font-weight: 600;
+    color: green;
+}
+
 @media (max-width: 991px) {
     .show-offers {
         position: relative;

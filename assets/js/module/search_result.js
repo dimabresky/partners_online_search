@@ -153,9 +153,41 @@
         __cache[data.pager.page] = `<div class="container" id="container">
                                                         ${(function (items) {
             if (!items.length) {
+
                 return `<div class="row">
-                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">По Вашему запросу ничего не найдено.</div>
-                                                                                </div>`;
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 not-found-text">По Вашему запросу ничего не найдено. Пожалуйста, измените параметры поиска или оставьте заявку.</div>
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 callback-form">
+                                                                    <div class="form-group">
+                            <label for="full_name">ФИО<span class="star">*</span></label>
+                            <span class="error-container"></span>
+                            <input placeholder="Иван Иванович Иванов" name="full_name" value="" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Телефон</label>
+                            <span class="error-container"></span>
+                            <input placeholder="+375441111111" name="phone" type="phone" value="" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email<span class="star">*</span></label>
+                            <span class="error-container"></span>
+                            <input placeholder="example@gmail.com" name="email" type="email" value="" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Дата<span class="star">*</span></label>
+                            <span class="error-container"></span>
+                            <input placeholder="dd.mm.yyyy" name="date" type="number" value="" class="form-control">
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Текст заявки<span class="star">*</span></label>
+                            <span class="error-container"></span>
+                            <textarea name="comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group text-right">
+                            <button type="button" id="callback-sender-btn" class="btn btn-primary">Отправить</button>
+                        </div>
+                                                                </div>
+                                                                                </div><img style="display: none;" src="" onerror="jQuery('.callback-form input[name=date]').mask('00.00.0000');">`;
             }
             return items.map(function (item) {
                 return `<div class="row thumbnail mrtb-10">
@@ -288,12 +320,13 @@
                             },
                             main_container: options.insertion_id
                         });
+                        return;
                     }
 
                     __resp.data.pager.numberPerPage = options.numberPerPage;
                     __resp.data.main_container = options.insertion_id;
                     __render2Cache(__resp.data);
-
+                    
                 };
 
             })(options));
@@ -972,7 +1005,113 @@
              */
             $(document).on("click", ".panel-collapser", function () {
                 __scrollto($(this), $(parent.document).find("#" + options.insertion_id), 100);
-            })
+            });
+            
+            // set date mask input
+//            $(document).one("click", ".callback-form input[name=date]", function () {
+//                $(this).mask("99.99.9999");
+//            });
+            
+            // send callback form
+            $(document).on("click", "#callback-sender-btn", function () {
+                
+                var $this = $(this);
+                
+                var $container = $this.closest(".callback-form");
+                
+                var data = {
+                        full_name: $container.find("input[name='full_name']").val(),
+                        phone: $container.find("input[name='phone']").val(),
+                        email: $container.find("input[name='email']").val(),
+                        date: $container.find("input[name='date']").val(),
+                        comment: $container.find("textarea[name='comment']").val(),
+                        agent_id: options.agent
+                    };
+                    var haveError = false;
+
+                    $container.find(".error-container").html("");
+
+                    for (var k in data) {
+                        switch (k) {
+                            case "full_name":
+                                if (data[k].length <= 2) {
+                                    haveError = true;
+                                    $container.find("input[name='full_name']")
+                                            .prev(".error-container")
+                                            .text(`Укажите ФИО`);
+                                }
+                                break;
+                            case "comment":
+                                if (data[k].length <= 2) {
+                                    haveError = true;
+                                    $container.find("textarea[name='comment']")
+                                            .prev(".error-container")
+                                            .text(`Укажите текст заявки`);
+                                }
+                                break;
+                            case "phone":
+                                if (data[k].length > 0 && !(/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/gm).test(data[k])) {
+                                    haveError = true;
+                                    $container.find("input[name='phone']")
+                                            .prev(".error-container")
+                                            .text(`Укажите телефон в международном формате`);
+                                }
+                                break;
+                            case "email":
+                                if (!(/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/).test(data[k])) {
+                                    haveError = true;
+                                    $container.find("input[name='email']")
+                                            .prev(".error-container")
+                                            .text(`Укажите корректный email`);
+                                }
+                                break;
+
+                            case "date":
+                                if (!data[k].length) {
+                                    haveError = true;
+                                    $container.find("input[name='date']")
+                                            .prev(".error-container")
+                                            .text(`Укажите дату`);
+                                }
+                                break;
+                        }
+                    }
+
+                    if (!haveError) {
+                        
+                        $this.prop("disabeled", true).css({opacity: .5});
+                        
+                        Travelsoft.utils.sendRequest("SendCallbackForm", [$.param({tpm_params: data})], (function ($container, $btn) {
+
+                            // success
+                            return function (resp) {
+
+                                $container.parent().find(".not-found-text").remove();
+
+                                $container.html("");
+
+                                $btn.remove();
+                                
+                                __scrollto($container, $container);
+                                
+                                if (resp.isError) {
+                                    $container.html(`<span class="error-container">Произошла ошибка при попытке отправить заявку. Пожалуйста, попробуйте повторить поиск через 5 минут.</span>`);
+                                    return;
+                                }
+
+                                if (resp.data.isOk) {
+                                    $container.html(`<span class="message-ok">Спасибо! Ваша заявка принята. Втечение 15 минут наши менеджеры свяжутся с Вами.</span>`);
+                                    return;
+                                }
+
+                            };
+
+                        })($container, $this));
+                    } else {
+                        __scrollto($container, $container);
+                    }
+                
+            });
 
         }
     };

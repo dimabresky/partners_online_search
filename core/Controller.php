@@ -119,7 +119,19 @@ class Controller {
                 $this->_api->getScript($params);
 
                 break;
+            
+            case "SendCallbackForm":
+            
+                $data = $this->_api->sendCallbackForm($params);
 
+                $error = "";
+                if (empty($data) || !$data["isOk"]) {
+                    $error = "Send callback error";
+                }
+                $this->_sendResponse($data, $error, $callback);
+
+                break;
+                
             default:
 
                 $this->_sendResponse(array(), "Bad request", "");

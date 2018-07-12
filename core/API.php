@@ -185,7 +185,8 @@ class API implements interfaces\API {
 
         $arFields = $element->GetFields();
         $arProperties = $element->GetProperties();
-
+        
+        $result = array();
         if ($arFields["ID"] > 0) {
 
             if ($arProperties["TOWN"]["VALUE"] && $arProperties["TOWN"]["MULTIPLE"] === "Y") {
@@ -506,7 +507,50 @@ class API implements interfaces\API {
         header("HTTP/1.0 404 Not Found");
         die;
     }
-
+    
+    public function sendCallbackForm(array $parameters): array {
+        
+        $result = array("isOk" => true);
+        
+        // small validation
+        if (
+                strlen($parameters["full_name"]) <= 2 ||
+                strlen($parameters["comment"]) <= 2 ||
+                strlen($parameters["date"]) <= 2||
+                !\check_email($parameters["email"])
+        ) {
+            $result["isOk"] = false;
+        }
+        
+        if ($result["isOk"]) {
+            
+            $CALLBACK_EVENT_TYPE_NAME = "FEEDBACK_FORM";
+            
+            $CALLBACK_MESSAGE_ID = 93;
+            
+            $parameters["comment"] = strip_tags($parameters["comment"]);
+            
+            $site_id = \SITE_ID;
+            if (!strlen($site_id)) {
+                // try set default site id
+                $site_id = "s1";
+            }
+            
+            $email_to = \Bitrix\Main\Config\Option::get("main", "email_from");
+            if ($parameters["agent_id"] > 0) {
+                // get email for agent if exists
+                $arUser = \CUser::GetByID($parameters["agent_id"])->Fetch();
+                if (strlen($arUser["EMAIL"])) {
+                    $email_to = $arUser["EMAIL"];
+                }
+            }
+            
+            \CEvent::Send($CALLBACK_EVENT_TYPE_NAME, $site_id, array_merge($parameters, array("EMAIL_TO" => $email_to)), "N", $CALLBACK_MESSAGE_ID);
+        }
+        
+        return $result;
+    }
+    
     protected function _makeRoomDescriptionArray(array $arr_room) {
 
         $result = array();
