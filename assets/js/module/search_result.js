@@ -165,7 +165,7 @@
                         <div class="form-group">
                             <label for="phone">Телефон</label>
                             <span class="error-container"></span>
-                            <input placeholder="+375441111111" name="phone" type="phone" value="" class="form-control">
+                            <input placeholder="+375441111111" name="phone" type="tel" value="" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="email">Email<span class="star">*</span></label>
@@ -175,7 +175,7 @@
                         <div class="form-group">
                             <label for="date">Дата<span class="star">*</span></label>
                             <span class="error-container"></span>
-                            <input placeholder="dd.mm.yyyy" name="date" type="number" value="" class="form-control">
+                            <input placeholder="__.__.____" name="date" type="text" value="" class="form-control">
                             
                         </div>
                         <div class="form-group">
@@ -1029,7 +1029,11 @@
                     };
                     var haveError = false;
 
-                    $container.find(".error-container").html("");
+                    $container.find(".error-container").each(function () {
+                        var $this = $(this);
+                        $this.removeClass("active");
+                        $this.html("");
+                    });
 
                     for (var k in data) {
                         switch (k) {
@@ -1037,7 +1041,7 @@
                                 if (data[k].length <= 2) {
                                     haveError = true;
                                     $container.find("input[name='full_name']")
-                                            .prev(".error-container")
+                                            .prev(".error-container").addClass("active")
                                             .text(`Укажите ФИО`);
                                 }
                                 break;
@@ -1045,7 +1049,7 @@
                                 if (data[k].length <= 2) {
                                     haveError = true;
                                     $container.find("textarea[name='comment']")
-                                            .prev(".error-container")
+                                            .prev(".error-container").addClass("active")
                                             .text(`Укажите текст заявки`);
                                 }
                                 break;
@@ -1053,7 +1057,7 @@
                                 if (data[k].length > 0 && !(/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/gm).test(data[k])) {
                                     haveError = true;
                                     $container.find("input[name='phone']")
-                                            .prev(".error-container")
+                                            .prev(".error-container").addClass("active")
                                             .text(`Укажите телефон в международном формате`);
                                 }
                                 break;
@@ -1061,7 +1065,7 @@
                                 if (!(/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/).test(data[k])) {
                                     haveError = true;
                                     $container.find("input[name='email']")
-                                            .prev(".error-container")
+                                            .prev(".error-container").addClass("active")
                                             .text(`Укажите корректный email`);
                                 }
                                 break;
@@ -1070,7 +1074,7 @@
                                 if (!data[k].length) {
                                     haveError = true;
                                     $container.find("input[name='date']")
-                                            .prev(".error-container")
+                                            .prev(".error-container").addClass("active")
                                             .text(`Укажите дату`);
                                 }
                                 break;
@@ -1092,7 +1096,7 @@
 
                                 $btn.remove();
                                 
-                                __scrollto($container, $container);
+                                __scrollto($container, $container, -200);
                                 
                                 if (resp.isError) {
                                     $container.html(`<span class="error-container">Произошла ошибка при попытке отправить заявку. Пожалуйста, попробуйте повторить поиск через 5 минут.</span>`);
@@ -1108,7 +1112,7 @@
 
                         })($container, $this));
                     } else {
-                        __scrollto($container, $container);
+                        __scrollto($(".callback-form .error-container.active").first(), $container, -200);
                     }
                 
             });
