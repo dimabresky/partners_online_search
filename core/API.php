@@ -41,7 +41,9 @@ class API implements interfaces\API {
         $types = explode("|", $parameters["types"]);
 
         $def_objects = explode("|", $parameters["def_objects"]);
-
+        
+        $country = explode("|", $parameters["country"]);
+        
         $result = array();
 
         if (empty($types)) {
@@ -71,7 +73,11 @@ class API implements interfaces\API {
             # их фильтрация по наличию цены
             $filterMethod = $type . "FilterByPriceExists";
             $storeID = \travelsoft\booking\Utils::getOpt($type);
-            $ids = $this->$filterMethod($this->toCache($type . "GetArrayId", array("IBLOCK_ID" => $storeID, "ACTIVE" => "Y"), array("ID"), null));
+            $arFilter = array("IBLOCK_ID" => $storeID, "ACTIVE" => "Y");
+            if (!empty($country)) {
+                $arFilter["PROPERTY_COUNTRY"] = $country;
+            }
+            $ids = $this->$filterMethod($this->toCache($type . "GetArrayId", $arFilter, array("ID"), null));
 
             if ($ids) {
                 // получение результата
@@ -530,6 +536,15 @@ class API implements interfaces\API {
             
             $parameters["comment"] = strip_tags($parameters["comment"]);
             
+            $object_name = "не удалось определить";
+            if ($parameters["search_item_id"] > 0) {
+                \Bitrix\Main\Loader::includeModule("iblock");
+                $arObject = \CIBlockElement::GetByID($parameters["search_item_id"])->Fetch();
+                if (isset($arObject["NAME"])) {
+                    $object_name = $arObject["NAME"];
+                }
+            }
+            
             $site_id = \SITE_ID;
             if (!strlen($site_id)) {
                 // try set default site id
@@ -545,10 +560,46 @@ class API implements interfaces\API {
                 }
             }
             
-            \CEvent::Send($CALLBACK_EVENT_TYPE_NAME, $site_id, array_merge($parameters, array("EMAIL_TO" => $email_to)), "N", $CALLBACK_MESSAGE_ID);
+            \CEvent::Send($CALLBACK_EVENT_TYPE_NAME, $site_id, array_merge($parameters, array("EMAIL_TO" => $email_to), array("OBJECT_NAME" => $object_name)), "N", $CALLBACK_MESSAGE_ID);
         }
         
         return $result;
+    }
+    
+    /**
+     * Возвращает HTML для выбора объектов поиска в форме генерации кода для вставки
+     * @param string $object_type
+     * @return string
+     */
+    public static function getObjectChooseHTML(string $object_type) : string {
+                
+        $classname = "\\travelsoft\\booking\\datastores\\". ucfirst(strtolower($object_type))."DataStore";
+        
+        $HTML = '<option value="">...</option>';
+        
+        foreach ($classname::get(array("filter" => array("ACTIVE" => "Y"), "select" => array("NAME", "ID"))) as $arObjects) {
+            
+            $HTML .= '<option value="'.$arObjects["ID"].'">'.$arObjects["NAME"].'</option>';
+        }
+        
+        return $HTML;
+    }
+    
+    /**
+     * Возвращает HTML для выбора стран поиска в форме генерации кода для вставки
+     * @return string
+     */
+    public static function getCountriesChooseHTML (): string {
+        
+        $dbList = \CIBlockElement::GetList(array("NAME" => "ASC"), array("IBLOCK_ID" => 3, "ACTIVE" => "Y"), false, false, array("ID", "NAME"));
+        
+        $HTML = '<option value="">...</option>';
+        
+        while ($arCountry = $dbList->Fetch()) {
+            $HTML .= '<option value="'.$arCountry["ID"].'">'.$arCountry["NAME"].'</option>';
+        }
+        
+        return $HTML;
     }
     
     protected function _makeRoomDescriptionArray(array $arr_room) {
@@ -849,7 +900,7 @@ class API implements interfaces\API {
      * @param string $agent
      * @return string
      */
-    public static function agentHashing(string $agent) {
+    public static function agentHashing(string $agent) : string {
         return md5($agent . self::$salt);
     }
 
