@@ -1,7 +1,13 @@
 /**
  * children.js
+ * 
+ * dependencies:
+ *      namespace.js
+ *      const.js
+ *      utils.js
+ * 
  * @author dimabresky
- * @copyright (c) 2017, travelsoft 
+ * @copyright (c) 2017, travelsoft
  */
 
 /**
@@ -136,10 +142,10 @@
             var row = __createRow();
             var col = __createCol();
             var form_group = __createFormGroup();
-            var label = __createLabel("Сколько ?");
+            //var label = __createLabel("Сколько ?");
             var select = __createSelect(data);
             form_group.style["margin-top"] = "20px";
-            form_group.appendChild(label);
+            //form_group.appendChild(label);
             form_group.appendChild(select);
             
             select.onchange = function () {
