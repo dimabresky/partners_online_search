@@ -1,5 +1,12 @@
 /**
  * search_result.js
+ * 
+ * dependencies:
+ *      namespace.js
+ *      const.js
+ *      utils.js
+ *      mask.js
+ * 
  * @author dimabresky
  * @copyright (c) 2017, travelsoft 
  */
@@ -157,6 +164,7 @@
                 return `<div class="row">
                                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 not-found-text">По Вашему запросу ничего не найдено. Пожалуйста, измените параметры поиска или оставьте заявку.</div>
                                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 callback-form">
+                                                                <input type="hidden" name="search_item_id" value="${data.search_items_id.length === 1 ? data.search_items_id[0] : 0}">
                                                                     <div class="form-group">
                             <label for="full_name">ФИО<span class="star">*</span></label>
                             <span class="error-container"></span>
@@ -325,6 +333,29 @@
 
                     __resp.data.pager.numberPerPage = options.numberPerPage;
                     __resp.data.main_container = options.insertion_id;
+                    __resp.data.search_items_id = (function () {
+                        var queryParts = window.parent.location.search
+                            .replace("?", "")
+                            .split("&")
+                            .filter(function (element) {
+                                return element.length > 0 && element.indexOf("tpm_params") === 0;
+                            });
+                        var id = [];
+                        var id_query_parts = [];
+                        var i = 0;
+                        
+                        if (queryParts.length > 0) {
+                            for (i = 0; i < queryParts.length; i = i+1) {
+                                
+                                if (/tpm_params(.*)id(.*)/.test(queryParts[i])) {
+                                    id_query_parts = queryParts[i].split("=");
+                                    id.push(id_query_parts[1]);
+                                }
+                            }
+                        }
+                            
+                        return id;
+                    })();
                     __render2Cache(__resp.data);
                     
                 };
@@ -1025,7 +1056,8 @@
                         email: $container.find("input[name='email']").val(),
                         date: $container.find("input[name='date']").val(),
                         comment: $container.find("textarea[name='comment']").val(),
-                        agent_id: options.agent
+                        agent_id: options.agent,
+                        search_item_id: $container.find("input[name='search_item_id']").val()
                     };
                     var haveError = false;
 
