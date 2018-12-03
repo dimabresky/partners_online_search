@@ -1,0 +1,27 @@
+{
+  "name": "travelsoft.pm",
+  "version": "1.0.0",
+  "description": "travelsoft partners manager",
+  "main": "index.php",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dbresky@github.com/dimabresky/travelsoft.pm.git"
+  },
+  "keywords": [
+    "travelsoft",
+    "partners",
+    "module"
+  ],
+  "author": "dimabresky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dimabresky/travelsoft.pm/issues"
+  },
+  "homepage": "https://github.com/dimabresky/travelsoft.pm#readme"
+}
