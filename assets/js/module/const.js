@@ -1,5 +1,8 @@
 /**
  * const.js
+ * 
+ * dependencies: namespace.js
+ * 
  * @author dimabresky
  * @copyright (c) 2017, travelsoft 
  */

@@ -1,5 +1,8 @@
 /**
  * forms.js
+ * 
+ * dependencies: namespace.js, const.js, utils.js, frames.js 
+ * 
  * @author dimabresky
  * @copyright (c) 2017, travelsoft 
  */

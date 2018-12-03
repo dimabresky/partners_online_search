@@ -1,6 +1,8 @@
 /**
  * datapicker.js
  * 
+ * dependencies: namespace.js, const.js, utils.js
+ * 
  * use daterangepicker from Dan Grossman https://github.com/dangrossman/bootstrap-daterangepicker
  * 
  * @author dimabresky
