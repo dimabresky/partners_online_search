@@ -26,6 +26,7 @@
   "homepage": "https://github.com/dimabresky/travelsoft.pm#readme",
   "dependencies": {
     "gulp": "^3.9.1",
-    "gulp-uglify": "^3.0.1"
+    "gulp-concat": "^2.6.1",
+    "gulp-minify": "^3.1.0"
   }
 }
