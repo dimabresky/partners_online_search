@@ -1,5 +1,5 @@
 
-<div class="container">
+<!--<div class="container">-->
     <div class="row">
 
         <div class="col-md-12">
@@ -42,8 +42,12 @@
                                 <input placeholder="https://example.com" type="text" name="placements_url" class="form-control">
                             </div>
                             <div id="placement-id">
-                                <label>ID объекта, который будет выбран в форме по-умолчанию</label>
-                                <input type="text" name="placements_id" class="form-control">
+                                <label>Oбъект, который будет выбран в форме по-умолчанию</label>
+                                <select name="placements_id" class="select2">{{placement-id-select-options}}</select>
+                            </div>
+                            <div id="placement-country-id">
+                                <label>Страна, объекты которой будут доступны для выбора</label>
+                                <select name="placements_country_id" class="select2">{{placement-country-id-select-options}}</select>
                             </div>
                         </div>
 
@@ -62,7 +66,11 @@
                             </div>
                             <div id="sanatorium-id">
                                 <label>ID объекта, который будет выбран в форме по-умолчанию</label>
-                                <input type="text" name="sanatorium_id" class="form-control">
+                                <select name="sanatorium_id" class="select2">{{sanatorium-id-select-options}}</select>
+                            </div>
+                            <div id="sanatorium-country-id">
+                                <label>Страна, объекты которой будут доступны для выбора</label>
+                                <select name="sanatorium_country_id" class="select2">{{sanatorium-country-id-select-options}}</select>
                             </div>
                         </div>
 
@@ -81,7 +89,11 @@
                             </div>
                             <div id="excursions-id">
                                 <label>ID объекта, который будет выбран в форме по-умолчанию</label>
-                                <input type="text" name="excursions_id" class="form-control">
+                                <select name="excursions_id" class="select2">{{excursions-id-select-options}}</select>
+                            </div>
+                            <div id="excursions-country-id">
+                                <label>Страна, объекты которой будут доступны для выбора</label>
+                                <select name="excursions_country_id" class="select2">{{excursions-country-id-select-options}}</select>
                             </div>
                         </div>
 
@@ -92,6 +104,14 @@
                         <h3>Настройка результатов поиска по:</h3>
                         <input name="agent" type="hidden" value="{{agent}}">
                         <input name="hash" type="hidden" value="{{hash}}">
+                        <div id="currency-block">
+                            <label>Валюта:</label>
+                            <select name="currency">
+                                <option selected="" value="BYN">BYN</option>
+                                <option value="RUB">RUB</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
                         <div class="radio">
                             <label>
                                 <input class="toggle" type="radio" data-target="sub-block~search-result-options~placements-number-per-page~citizen_price" name="result" value="placements">
@@ -159,8 +179,8 @@
         </div>
 
     </div>
-</div>
-
+<!--</div>-->
+<link href="/travelsoft.pm/?method=GetStylesheet&tpm_params[target]=code_generator" type="text/css" rel="stylesheet">
 <script src="/travelsoft.pm/?method=GetScript&tpm_params[target]=code_generator"></script>
 <script>
     Travelsoft.CodeGenerator();

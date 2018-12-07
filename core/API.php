@@ -56,11 +56,11 @@ class API implements interfaces\API {
         $titles = array(
             "excursions" => array(
                 "tab" => "Экскурсии",
-                "objects" => "Населенный пункт, экскурсия"
+                "objects" => "Название экскурсии"
             ),
             "placements" => array(
                 "tab" => "Проживание",
-                "objects" => "Населенный пункт, гостиница"
+                "objects" => "Город, гостиница"
             ),
             "sanatorium" => array(
                 "tab" => "Санатории",
@@ -96,7 +96,7 @@ class API implements interfaces\API {
                         "tabIsActive" => $active === $type,
                         "tabTitle" => $titles[$type]["tab"],
                         "dates" => array(
-                            "title" => "Период проживания",
+                            "title" => $type === "excursions" ? "Дата тура" : "Период проживания",
                             "separator" => self::DATE_SEPARATOR,
                             "format" => "DD.MM.YYYY",
                             "durationTitle" => "Продолжительность(дней)",
@@ -293,6 +293,9 @@ class API implements interfaces\API {
         if ($parameters["citizen_price"]) {
             $request["citizen_price"] = $parameters["citizen_price"];
         }
+        
+        $request['currency'] = $this->getCurrency($parameters['currency']);
+        
         $complex_logic = null;
         if ($parameters["id"]) {
 
@@ -389,7 +392,7 @@ class API implements interfaces\API {
 
         $arr_uf = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFields("HLBLOCK_" . \travelsoft\booking\Utils::getOpt("rates"));
 
-        $result = $arRates = $arServices = array();
+        $result = $arRates = $arService = array();
 
         foreach ($offers as $arrservdata) {
 
@@ -419,7 +422,7 @@ class API implements interfaces\API {
                         $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME" . POSTFIX_PROPERTY, "UF_NOTE" . POSTFIX_PROPERTY, "ID", "UF_BR_PRICES", "UF_RF_PRICES", "UF_EU_PRICES"))));
                     }
 
-                    $currency_id = $this->getCurrencyIdByCode("BYN");
+                    $currency_id = $this->getCurrencyIdByCode($this->getCurrency($parameters['currency']));
                     $add2cart = array(
                         "service_id" => (int) $sid,
                         "rate_id" => (int) $rid,
@@ -586,6 +589,13 @@ class API implements interfaces\API {
     }
     
     /**
+     * @return array
+     */
+    public static function getAvailCurrency () {
+        return ["BYN", "EUR", "USD"];
+    }
+    
+    /**
      * Возвращает HTML для выбора стран поиска в форме генерации кода для вставки
      * @return string
      */
@@ -654,7 +664,19 @@ class API implements interfaces\API {
 
         return $result;
     }
-
+    
+    /**
+     * @param string $currency
+     * @return string
+     */
+    protected function getCurrency ($currency) {
+        if (in_array($currency, $this->getAvailCurrency())) {
+            return $currency;
+        } else {
+            return "BYN";
+        }
+    }
+    
     protected function getPlacementsOffersRenderData(array $offers, array $parameters): array {
 
         return $this->getCommonOffersRenderData($offers, $parameters, "placements");
@@ -685,7 +707,7 @@ class API implements interfaces\API {
                             $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID"))));
                         }
 
-                        $currency_id = $this->getCurrencyIdByCode("BYN");
+                        $currency_id = $this->getCurrencyIdByCode($this->getCurrency($parameters['currency']));
                         $add2cart = array(
                             "service_id" => (int) $sid,
                             "rate_id" => (int) $rid,
@@ -871,7 +893,7 @@ class API implements interfaces\API {
                                 "airport" => $arProperties["DISTANCE_AIRPORT"]["VALUE"] ? $arProperties["DISTANCE_AIRPORT"]["VALUE"] : null,
                                 "minsk" => $arProperties["DISTANCE_MINSK"]["VALUE"] ? $arProperties["DISTANCE_MINSK"]["VALUE"] : null
                             ),
-                            "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode("BYN"))
+                            "price" => "От " . \travelsoft\booking\Utils::convertCurrency($arOffers[$arFields["ID"]]["PRICE"], $arOffers[$arFields["ID"]]["CURRENCY_ID"], $this->getCurrencyIdByCode($other['request']['currency']))
                         ),
                         "request" => array_merge(array(
                             "tpm_params[id][]=" . $arFields["ID"],

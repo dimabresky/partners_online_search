@@ -11,18 +11,16 @@
  * которая предусмотрена сайтом
  * 
  */
+require "interfaces/API.php";
+require "API.php";
 
 $agent_id = intVal($agent_id);
 
 if ($agent_id > 0) {
-    
-    require "interfaces/API.php";
-    require "API.php";
-    
-    $hash = travelsoft\pm\API::agentHashing((string)$agent_id);
-    
+
+    $hash = travelsoft\pm\API::agentHashing((string) $agent_id);
 } else {
-    
+
     $agent_id = null;
     $hash = null;
 }
@@ -31,7 +29,27 @@ ob_start();
 
 require "views/code_generator/index.html";
 
-$body = str_replace(array("{{agent}}", "{{hash}}"), array($agent_id, $hash), ob_get_clean());
+$countries = \travelsoft\pm\API::getCountriesChooseHTML();
+
+$body = str_replace([
+    "{{agent}}",
+    "{{hash}}",
+    "{{placement-id-select-options}}",
+    "{{placement-country-id-select-options}}",
+    "{{sanatorium-id-select-options}}",
+    "{{sanatorium-country-id-select-options}}",
+    "{{excursions-id-select-options}}",
+    "{{excursions-country-id-select-options}}"
+        ], [
+    $agent_id,
+    $hash,
+    \travelsoft\pm\API::getObjectChooseHTML("placements"),
+    $countries,
+    \travelsoft\pm\API::getObjectChooseHTML("sanatorium"),
+    $countries,
+    \travelsoft\pm\API::getObjectChooseHTML("excursions"),
+    $countries
+        ], ob_get_clean());
 
 echo $body;
 

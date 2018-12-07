@@ -1,4 +1,15 @@
 /**
+ * namespace.js
+ * @author dimabresky
+ */
+
+/**
+ * Пространство имен модуля travelsoft.pm
+ * @type Object
+ */
+var Travelsoft = Travelsoft || {};
+
+/**
  * select.js
  * @author dimabresky
  * @copyright (c) 2017, travelsoft 
