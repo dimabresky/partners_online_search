@@ -191,7 +191,7 @@ var Travelsoft = Travelsoft || {};
                                 type: "${search_result_object}",
                                 numberPerPage: ${number_per_page},
                                 citizen_price: "${citizen_price}",
-                                currency: "${currency}"
+                                currency: "${currency}",
                                 agent: "${document.querySelector("input[name='agent']").value}",
                                 hash: "${document.querySelector("input[name='hash']").value}"
                             }

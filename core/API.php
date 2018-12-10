@@ -592,7 +592,7 @@ class API implements interfaces\API {
      * @return array
      */
     public static function getAvailCurrency () {
-        return ["BYN", "EUR", "USD"];
+        return ["BYN", "EUR", "USD", "RUB"];
     }
     
     /**
