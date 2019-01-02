@@ -77,14 +77,14 @@
                         <div class="checkbox" style="margin-top: 20px">
                             <label>
                                 <input type="checkbox" name="tabs" value="excursions">
-                                Экскурсионные туры
+                                Экскурсии
                             </label>
                             <label>
                                 <input type="radio" name="active_tab" value="excursions">
                                 Активная вкладка по-умолчанию
                             </label>
                             <div id="excursions-url">
-                                <label>Полный url-адрес для перехода на страницу поиска экскурсионных туров</label>
+                                <label>Полный url-адрес для перехода на страницу поиска экскурсий</label>
                                 <input placeholder="https://example.com" type="text" name="excursions_url" class="form-control">
                             </div>
                             <div id="excursions-id">
@@ -94,6 +94,29 @@
                             <div id="excursions-country-id">
                                 <label>Страна, объекты которой будут доступны для выбора</label>
                                 <select name="excursions_country_id" class="select2">{{excursions-country-id-select-options}}</select>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox" style="margin-top: 20px">
+                            <label>
+                                <input type="checkbox" name="tabs" value="excursionstours">
+                                Экскурсионные туры
+                            </label>
+                            <label>
+                                <input type="radio" name="active_tab" value="excursionstours">
+                                Активная вкладка по-умолчанию
+                            </label>
+                            <div id="excursionstours-url">
+                                <label>Полный url-адрес для перехода на страницу поиска экскурсионных туров</label>
+                                <input placeholder="https://example.com" type="text" name="excursionstours_url" class="form-control">
+                            </div>
+                            <div id="excursionstours-id">
+                                <label>ID объекта, который будет выбран в форме по-умолчанию</label>
+                                <select name="excursionstours_id" class="select2">{{excursionstours-id-select-options}}</select>
+                            </div>
+                            <div id="excursionstours-country-id">
+                                <label>Страна, объекты которой будут доступны для выбора</label>
+                                <select name="excursionstours_country_id" class="select2">{{excursionstours-country-id-select-options}}</select>
                             </div>
                         </div>
 
@@ -146,7 +169,7 @@
                         <div class="radio">
                             <label>
                                 <input class="toggle" type="radio" data-target="sub-block~search-result-options~excursions-number-per-page" name="result" value="excursions">
-                                экскурсионным турам
+                                экскурсиям
                             </label>
                             <div class="toggle-area" style="display: none" id="excursions-number-per-page">
                                 <label>Количество на станицу</label>
@@ -157,6 +180,22 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="radio">
+                            <label>
+                                <input class="toggle" type="radio" data-target="sub-block~search-result-options~excursionstours-number-per-page" name="result" value="excursionstours">
+                                экскурсионным турам
+                            </label>
+                            <div class="toggle-area" style="display: none" id="excursionstours-number-per-page">
+                                <label>Количество на станицу</label>
+                                <select class="form-control" name="excursionstours_number_per_page">
+                                    <option selected="" value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div class="toggle-area" style="display: none" id="citizen_price">
                             <label>Отображать типы цен для граждан</label>
                             <select class="form-control" name="citizen_price">

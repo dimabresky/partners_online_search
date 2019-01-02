@@ -39,7 +39,9 @@ $body = str_replace([
     "{{sanatorium-id-select-options}}",
     "{{sanatorium-country-id-select-options}}",
     "{{excursions-id-select-options}}",
-    "{{excursions-country-id-select-options}}"
+    "{{excursions-country-id-select-options}}",
+    "{{excursionstours-id-select-options}}",
+    "{{excursionstours-country-id-select-options}}"
         ], [
     $agent_id,
     $hash,
@@ -48,6 +50,8 @@ $body = str_replace([
     \travelsoft\pm\API::getObjectChooseHTML("sanatorium"),
     $countries,
     \travelsoft\pm\API::getObjectChooseHTML("excursions"),
+    $countries,
+    \travelsoft\pm\API::getObjectChooseHTML("excursionstours"),
     $countries
         ], ob_get_clean());
 

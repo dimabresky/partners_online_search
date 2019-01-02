@@ -10,6 +10,8 @@
 #sanatorium-id,
 #sanatroium-country-id,
 #excursions-id,
-#excursions-country-id{
+#excursions-country-id,
+#excursionstours-id,
+#excursionstours-country-id{
     margin: 10px 0;
 }

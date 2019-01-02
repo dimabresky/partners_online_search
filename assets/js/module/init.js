@@ -47,7 +47,7 @@
      *          forms: {
      *                  
      *              // типы форм
-     *              types: [excursions, placements, sanatorium],
+     *              types: [excursions, placements, sanatorium, excursionstours],
      *              
      *              // URL для переходов на страницы поиска результатов
      *              urls: [],

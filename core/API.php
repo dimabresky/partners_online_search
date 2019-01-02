@@ -41,9 +41,9 @@ class API implements interfaces\API {
         $types = explode("|", $parameters["types"]);
 
         $def_objects = explode("|", $parameters["def_objects"]);
-        
+
         $country = explode("|", $parameters["country"]);
-        
+
         $result = array();
 
         if (empty($types)) {
@@ -58,6 +58,10 @@ class API implements interfaces\API {
                 "tab" => "Экскурсии",
                 "objects" => "Название экскурсии"
             ),
+            "excursionstours" => array(
+                "tab" => "Туры",
+                "objects" => "Название тура"
+            ),
             "placements" => array(
                 "tab" => "Проживание",
                 "objects" => "Город, гостиница"
@@ -71,11 +75,17 @@ class API implements interfaces\API {
 
             # получение объектов поиска
             # их фильтрация по наличию цены
+
             $filterMethod = $type . "FilterByPriceExists";
-            $storeID = \travelsoft\booking\Utils::getOpt($type);
+            $storeID = \travelsoft\booking\Utils::getOpt($type === "excursionstours" ? "excursions" : $type);
             $arFilter = array("IBLOCK_ID" => $storeID, "ACTIVE" => "Y");
             if (!empty($country)) {
                 $arFilter["PROPERTY_COUNTRY"] = $country;
+            }
+            if ($type === "excursions") {
+                $arFilter["!=PROPERTY_IS_EXCURSION_TOUR_VALUE"] = "Y";
+            } elseif ($type === "excursionstours") {
+                $arFilter["PROPERTY_IS_EXCURSION_TOUR_VALUE"] = "Y";
             }
             $ids = $this->$filterMethod($this->toCache($type . "GetArrayId", $arFilter, array("ID"), null));
 
@@ -87,7 +97,15 @@ class API implements interfaces\API {
 
                     $def_selected = !empty($parameters["id"]) &&
                             $active === $type ? $parameters["id"] : array($def_objects[$k]);
-
+                    
+                    if ($type === "excursions") {
+                        $title = "Дата экскурсии";
+                    } elseif ($type === "excursionstours") {
+                        $title = "Дата тура";
+                    } else {
+                        $title = "Период проживания";
+                    }
+                    
                     $result[$type] = array(
                         "objects" => array(
                             "forSelect" => array(),
@@ -96,7 +114,7 @@ class API implements interfaces\API {
                         "tabIsActive" => $active === $type,
                         "tabTitle" => $titles[$type]["tab"],
                         "dates" => array(
-                            "title" => $type === "excursions" ? "Дата тура" : "Период проживания",
+                            "title" => $title,
                             "separator" => self::DATE_SEPARATOR,
                             "format" => "DD.MM.YYYY",
                             "durationTitle" => "Продолжительность(дней)",
@@ -191,7 +209,7 @@ class API implements interfaces\API {
 
         $arFields = $element->GetFields();
         $arProperties = $element->GetProperties();
-        
+
         $result = array();
         if ($arFields["ID"] > 0) {
 
@@ -293,9 +311,9 @@ class API implements interfaces\API {
         if ($parameters["citizen_price"]) {
             $request["citizen_price"] = $parameters["citizen_price"];
         }
-        
+
         $request['currency'] = $this->getCurrency($parameters['currency']);
-        
+
         $complex_logic = null;
         if ($parameters["id"]) {
 
@@ -516,29 +534,29 @@ class API implements interfaces\API {
         header("HTTP/1.0 404 Not Found");
         die;
     }
-    
+
     public function sendCallbackForm(array $parameters): array {
-        
+
         $result = array("isOk" => true);
-        
+
         // small validation
         if (
                 strlen($parameters["full_name"]) <= 2 ||
                 strlen($parameters["comment"]) <= 2 ||
-                strlen($parameters["date"]) <= 2||
+                strlen($parameters["date"]) <= 2 ||
                 !\check_email($parameters["email"])
         ) {
             $result["isOk"] = false;
         }
-        
+
         if ($result["isOk"]) {
-            
+
             $CALLBACK_EVENT_TYPE_NAME = "FEEDBACK_FORM";
-            
+
             $CALLBACK_MESSAGE_ID = 93;
-            
+
             $parameters["comment"] = strip_tags($parameters["comment"]);
-            
+
             $object_name = "не удалось определить";
             if ($parameters["search_item_id"] > 0) {
                 \Bitrix\Main\Loader::includeModule("iblock");
@@ -547,13 +565,13 @@ class API implements interfaces\API {
                     $object_name = $arObject["NAME"];
                 }
             }
-            
+
             $site_id = \SITE_ID;
             if (!strlen($site_id)) {
                 // try set default site id
                 $site_id = "s1";
             }
-            
+
             $email_to = \Bitrix\Main\Config\Option::get("main", "email_from");
             if ($parameters["agent_id"] > 0) {
                 // get email for agent if exists
@@ -562,56 +580,65 @@ class API implements interfaces\API {
                     $email_to = $arUser["EMAIL"];
                 }
             }
-            
+
             \CEvent::Send($CALLBACK_EVENT_TYPE_NAME, $site_id, array_merge($parameters, array("EMAIL_TO" => $email_to), array("OBJECT_NAME" => $object_name)), "N", $CALLBACK_MESSAGE_ID);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Возвращает HTML для выбора объектов поиска в форме генерации кода для вставки
      * @param string $object_type
      * @return string
      */
-    public static function getObjectChooseHTML(string $object_type) : string {
-                
-        $classname = "\\travelsoft\\booking\\datastores\\". ucfirst(strtolower($object_type))."DataStore";
-        
+    public static function getObjectChooseHTML(string $object_type): string {
+
+        $classname = "\\travelsoft\\booking\\datastores\\" . ucfirst(strtolower($object_type)) . "DataStore";
+
         $HTML = '<option value="">...</option>';
-        
-        foreach ($classname::get(array("filter" => array("ACTIVE" => "Y"), "select" => array("NAME", "ID"))) as $arObjects) {
-            
-            $HTML .= '<option value="'.$arObjects["ID"].'">'.$arObjects["NAME"].'</option>';
+
+        $arFilter = array("ACTIVE" => "Y");
+
+        if ($object_type === "excursions") {
+            $arFilter["!=PROPERTY_IS_EXCURSION_TOUR_VALUE"] = "Y";
+        } elseif ($object_type === "excursionstours") {
+            $arFilter["PROPERTY_IS_EXCURSION_TOUR_VALUE"] = "Y";
+            $classname = "\\travelsoft\\booking\\datastores\\ExcursionsDataStore";
         }
-        
+
+        foreach ($classname::get(array("filter" => $arFilter, "select" => array("NAME", "ID"))) as $arObjects) {
+
+            $HTML .= '<option value="' . $arObjects["ID"] . '">' . $arObjects["NAME"] . '</option>';
+        }
+
         return $HTML;
     }
-    
+
     /**
      * @return array
      */
-    public static function getAvailCurrency () {
+    public static function getAvailCurrency() {
         return ["BYN", "EUR", "USD", "RUB"];
     }
-    
+
     /**
      * Возвращает HTML для выбора стран поиска в форме генерации кода для вставки
      * @return string
      */
-    public static function getCountriesChooseHTML (): string {
-        
+    public static function getCountriesChooseHTML(): string {
+
         $dbList = \CIBlockElement::GetList(array("NAME" => "ASC"), array("IBLOCK_ID" => 3, "ACTIVE" => "Y"), false, false, array("ID", "NAME"));
-        
+
         $HTML = '<option value="">...</option>';
-        
+
         while ($arCountry = $dbList->Fetch()) {
-            $HTML .= '<option value="'.$arCountry["ID"].'">'.$arCountry["NAME"].'</option>';
+            $HTML .= '<option value="' . $arCountry["ID"] . '">' . $arCountry["NAME"] . '</option>';
         }
-        
+
         return $HTML;
     }
-    
+
     protected function _makeRoomDescriptionArray(array $arr_room) {
 
         $result = array();
@@ -664,19 +691,19 @@ class API implements interfaces\API {
 
         return $result;
     }
-    
+
     /**
      * @param string $currency
      * @return string
      */
-    protected function getCurrency ($currency) {
+    protected function getCurrency($currency) {
         if (in_array($currency, $this->getAvailCurrency())) {
             return $currency;
         } else {
             return "BYN";
         }
     }
-    
+
     protected function getPlacementsOffersRenderData(array $offers, array $parameters): array {
 
         return $this->getCommonOffersRenderData($offers, $parameters, "placements");
@@ -685,6 +712,11 @@ class API implements interfaces\API {
     protected function getSanatoriumOffersRenderData(array $offers, array $parameters): array {
 
         return $this->getCommonOffersRenderData($offers, $parameters, "sanatorium");
+    }
+    
+    protected function getExcursionstoursOffersRenderData(array $offers, array $parameters): array {
+        $parameters["__type_alias"] = "excursionstours";
+        return $this->getExcursionsOffersRenderData($offers, $parameters);
     }
 
     protected function getExcursionsOffersRenderData(array $offers, array $parameters): array {
@@ -719,7 +751,7 @@ class API implements interfaces\API {
                             "duration" => $arrdata["DURATION"],
                             "children" => (int) $parameters["children"],
                             "children_age" => $parameters["children_age"],
-                            "type" => "excursions",
+                            "type" => isset($parameters["__type_alias"]) ? $parameters["__type_alias"] : "excursions",
                             "price" => \travelsoft\booking\Utils::convertCurrency($arrdata["PRICE"], $arrdata["CURRENCY_ID"], $currency_id, true),
                             "agent" => (int) $parameters["agent"]
                         );
@@ -922,7 +954,7 @@ class API implements interfaces\API {
      * @param string $agent
      * @return string
      */
-    public static function agentHashing(string $agent) : string {
+    public static function agentHashing(string $agent): string {
         return md5($agent . self::$salt);
     }
 
@@ -932,7 +964,11 @@ class API implements interfaces\API {
      * @return string
      */
     protected function getDefDatesRange(string $type) {
-
+        
+        if ($type === "excursionstours") {
+            $type = "excursions";
+        }
+        
         $timestamps = unserialize(\travelsoft\booking\Utils::getOpt($type . "DateRange"));
 
         return date("d.m.Y", $timestamps[0]) . "-" . date("d.m.Y", $timestamps[1]);
@@ -1019,6 +1055,13 @@ class API implements interfaces\API {
     protected function excursionsFilterByPriceExists(array $brp) {
         return $this->filterByPriceExists($brp, "excursions");
     }
+    
+    /**
+     * @param array $brp
+     */
+    protected function excursionstoursFilterByPriceExists(array $brp) {
+        return $this->filterByPriceExists($brp, "excursionstours");
+    }
 
     /**
      * при необходимости реализовать фильтрацию по наличию цены
@@ -1055,13 +1098,24 @@ class API implements interfaces\API {
     }
 
     /**
-     * ID объектов поиска для санаториев
+     * ID объектов поиска для экскурсий
      * @param array $arFilter
      * @param array $arSelect
      * @param array $arOrder
      * @return array
      */
     protected function excursionsGetArrayId(array $arFilter, array $arSelect = array("*"), array $arOrder = null) {
+        return $this->getArrayId($arFilter, $arSelect, $arOrder);
+    }
+    
+    /**
+     * ID объектов поиска для экскурсионных туров
+     * @param array $arFilter
+     * @param array $arSelect
+     * @param array $arOrder
+     * @return array
+     */
+    protected function excursionstoursGetArrayId(array $arFilter, array $arSelect = array("*"), array $arOrder = null) {
         return $this->getArrayId($arFilter, $arSelect, $arOrder);
     }
 
@@ -1213,6 +1267,17 @@ class API implements interfaces\API {
     protected function excursionsGetResult(array $arFilter, array $arSelect = array("*"), array $arOrder = null) {
         return $this->getResult($arFilter, $arSelect, $arOrder, "excursions");
     }
+    
+    /**
+     * Результат поиска объектов для экскурсионных туров
+     * @param array $arFilter
+     * @param array $arSelect
+     * @param array $arOrder
+     * @return array|null
+     */
+    protected function excursionstoursGetResult(array $arFilter, array $arSelect = array("*"), array $arOrder = null) {
+        return $this->getResult($arFilter, $arSelect, $arOrder, "excursionstours");
+    }
 
     /**
      * возвращает имя в зависимости от языка
@@ -1257,7 +1322,11 @@ class API implements interfaces\API {
             "addinfo" => null
         );
     }
-
+    
+    protected function getExcursionstoursDetailDescriptionRenderData (int $id) {
+        return $this->getExcursionsDetailDescriptionRenderData($id);
+    }
+    
     protected function getExcursionsDetailDescriptionRenderData(int $id) {
         $result = $this->getDefaultDetailDescriptionRenderData();
 

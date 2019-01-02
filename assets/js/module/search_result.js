@@ -1137,7 +1137,7 @@
                                 }
 
                                 if (resp.data.isOk) {
-                                    $container.html(`<span class="message-ok">Спасибо! Ваша заявка принята. Втечение 15 минут наши менеджеры свяжутся с Вами.</span>`);
+                                    $container.html(`<span class="message-ok">Спасибо! Ваша заявка принята. В течении 15 минут наши менеджеры свяжутся с Вами.</span>`);
                                     return;
                                 }
 
