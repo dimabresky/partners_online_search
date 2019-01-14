@@ -738,16 +738,17 @@ class API implements interfaces\API {
                         if (!isset($arRates[$rid])) {
                             $arRates[$rid] = current(\travelsoft\booking\datastores\RatesDataStore::get(array("filter" => array("ID" => $rid), "select" => array("UF_NAME", "ID"))));
                         }
-
+                        
                         $currency_id = $this->getCurrencyIdByCode($this->getCurrency($parameters['currency']));
+                        $date_from = 
                         $add2cart = array(
                             "service_id" => (int) $sid,
                             "rate_id" => (int) $rid,
                             "adults" => (int) $parameters["adults"],
                             "currency" => $currency_id,
                             "can_buy" => true,
-                            "date_from" => $parameters["date_from"],
-                            "date_to" => $parameters["date_to"],
+                            "date_from" => isset($parameters["__type_alias"]) ? $parameters["date_from"] : $timestamp,
+                            "date_to" => isset($parameters["__type_alias"]) ? $parameters["date_to"] : $timestamp + (($arrdata["DURATION"] - 1) * 86400),
                             "duration" => $arrdata["DURATION"],
                             "children" => (int) $parameters["children"],
                             "children_age" => $parameters["children_age"],
